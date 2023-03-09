@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">My Habits</string>
+    <string name="add_name">Добавьте название</string>
+    <string name="add_description">Добавьте описание</string>
+    <string name="save">Сохранить</string>
+    <string name="choose_type">Выберите тип</string>
+    <string name="choose_priority">Выберите приоритет</string>
+    <string name="repeat_number">Количество повторений</string>
+    <string name="periodicity">Периодичность</string>
+    <string name="habit_type_1">Тип 1</string>
+    <string name="habit_type_2">Тип 2</string>
+    <string name="habit_type_3">Тип 3</string>
+    <string name="habit_priority">Приоритет привычки</string>
+    <string name="add_execution_number">Введите количество повторений</string>
+    <string name="add_period">Добавьте периодичность</string>
+    <string name="add_habit">Добавить привычку</string>
+    <string name="close">Закрыть</string>
+
+    <string-array name="habit_priorities">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
+
+</resources>
