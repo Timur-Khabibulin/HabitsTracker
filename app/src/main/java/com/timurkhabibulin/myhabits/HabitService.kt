@@ -11,13 +11,19 @@ object HabitService {
         notifyChanges()
     }
 
-    fun getHabits(): List<Habit> {
+    fun getAllHabits(): List<Habit> {
         return habits
     }
+
+    fun getHabit(position: Int): Habit = habits[position]
 
     fun addListener(listener: HabitsListener) {
         listeners.add(listener)
         listener.invoke(habits)
+    }
+
+    fun changeItem(index: Int, newValue: Habit) {
+        habits[index] = newValue
     }
 
     fun removeListener(listener: HabitsListener) {

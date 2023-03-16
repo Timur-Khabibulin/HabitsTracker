@@ -1,14 +1,12 @@
 package com.timurkhabibulin.myhabits
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.color.DynamicColors
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.habit_item.*
-import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
     private lateinit var habitAdapter: HabitsAdapter
@@ -19,25 +17,30 @@ class MainActivity : AppCompatActivity() {
     private val habitsListener: HabitsListener = { habitAdapter.habits = it }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        updateList()
+         DynamicColors.applyToActivityIfAvailable(this)
 
-        make_new_habit.setOnClickListener() {
-            openHabitEditingActivity("add")
+        make_new_habit.setOnClickListener {
+            openHabitEditingActivity(EditingActivityMode.ADD, -1)
         }
     }
 
-    private fun openHabitEditingActivity(type: String) {
+    override fun onStart() {
+        super.onStart()
+        updateList()
+    }
+
+    private fun openHabitEditingActivity(mode: EditingActivityMode, itemPosition: Int) {
         val sendIntent = Intent(this, HabitEditingActivity::class.java).apply {
             val bundle = Bundle().apply {
-                putString("type", type)
+                putString(EditingActivityMode::class.java.toString(), mode.toString())
+                putInt("itemPosition", itemPosition)
             }
             putExtras(bundle)
         }
         startActivity(sendIntent)
-        finish()
     }
 
     override fun onDestroy() {
@@ -46,13 +49,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateList() {
-        habitAdapter = HabitsAdapter() {
-            openHabitEditingActivity("edit")
+        habitAdapter = HabitsAdapter { itemPosition ->
+            openHabitEditingActivity(EditingActivityMode.EDIT, itemPosition)
         }
+
         habitsService.addListener(habitsListener)
         val manager = LinearLayoutManager(this)
 
         recycler_view.adapter = habitAdapter
         recycler_view.layoutManager = manager
+        habitAdapter.submitList(habitsService.getAllHabits())
     }
 }

@@ -4,20 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/habit_editing_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:visibility="visible">
+    android:layout_height="match_parent">
 
 
     <ImageView
         android:id="@+id/close_button"
-        android:layout_width="24dp"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:contentDescription="@string/close"
+        android:paddingStart="16dp"
+        android:paddingTop="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/close"
-        android:contentDescription="@string/close"/>
+        app:srcCompat="@drawable/close" />
 
     <Button
         android:id="@+id/save_btn"
@@ -32,17 +31,19 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fillViewport="false"
+        android:layout_height="match_parent"
+        android:layout_marginTop="65dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/save_btn">
+        app:layout_constraintTop_toBottomOf="parent">
 
         <LinearLayout
             android:id="@+id/habit_editing_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:isScrollContainer="false"
+            android:nestedScrollingEnabled="false"
             android:orientation="vertical">
 
             <EditText
@@ -53,18 +54,19 @@
                 android:layout_marginStart="55dp"
                 android:layout_marginEnd="16dp"
                 android:autofillHints="no"
+                android:hint="@string/add_name"
                 android:inputType="textMultiLine"
-                android:text="@string/add_name"
                 android:textSize="28sp" />
 
             <View
-                android:id="@+id/divider"
+                android:id="@+id/divider6"
                 android:layout_width="match_parent"
-                android:layout_height="1dp" />
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:orientation="horizontal">
 
@@ -73,7 +75,6 @@
                     android:layout_width="24dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="17dp"
-                    android:layout_marginEnd="14dp"
                     android:layout_weight="0"
                     android:baselineAlignBottom="false"
                     android:contentDescription="note_image"
@@ -85,9 +86,10 @@
                     style="@style/Widget.Material3.AutoCompleteTextView.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
                     android:autofillHints="no"
+                    android:hint="@string/add_description"
                     android:inputType="textMultiLine"
-                    android:text="@string/add_description"
                     android:textSize="20sp" />
             </LinearLayout>
 
@@ -99,7 +101,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="55dp"
                 android:layout_marginEnd="16dp"
                 android:orientation="horizontal"
@@ -144,8 +146,8 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginStart="10dp">
+                    android:layout_marginStart="10dp"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/habit_priority_text"
@@ -156,8 +158,9 @@
 
                     <Spinner
                         android:id="@+id/priority_spinner"
+                        style="@android:style/Widget.DeviceDefault.Light.Spinner"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="50dp"
                         android:contentDescription="@string/habit_priority" />
                 </LinearLayout>
 
@@ -172,7 +175,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:orientation="horizontal">
 
@@ -180,20 +183,30 @@
                     android:id="@+id/imageView2"
                     android:layout_width="24dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="23dp"
+                    android:layout_gravity="center_vertical"
                     android:contentDescription="repeat_image"
-                    app:srcCompat="@drawable/event_repeat" />
+                    app:srcCompat="@drawable/replay_" />
 
-                <EditText
+                <TextView
                     android:id="@+id/execution_number_ET"
                     style="@style/Widget.Material3.AutoCompleteTextView.OutlinedBox"
-                    android:layout_width="match_parent"
+                    android:layout_width="172dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginStart="15dp"
                     android:autofillHints="no"
-                    android:inputType="textMultiLine"
-                    android:text="@string/add_execution_number"
+                    android:text="@string/repeat_number"
                     android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/editTextNumberDecimal"
+                    style="@style/Widget.Material3.TextInputEditText.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/edit_text_border"
+                    android:inputType="number"
+                    android:textSize="24sp" />
             </LinearLayout>
 
             <View
@@ -202,17 +215,63 @@
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider" />
 
-            <EditText
-                android:id="@+id/period_ET"
-                style="@style/Widget.Material3.AutoCompleteTextView.OutlinedBox"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="55dp"
-                android:layout_marginEnd="16dp"
-                android:autofillHints="no"
-                android:inputType="textMultiLine"
-                android:text="@string/add_period"
-                android:textSize="20sp" />
+                android:layout_marginHorizontal="16dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="24dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    app:srcCompat="@drawable/event_repeat" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/period_TV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_vertical"
+                        android:paddingStart="15dp"
+                        android:text="@string/add_period"
+                        android:textSize="20sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:layout_marginVertical="10dp"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/editTextNumber2"
+                            style="@style/Widget.Material3.TextInputEditText.OutlinedBox.Dense"
+                            android:layout_width="65dp"
+                            android:layout_height="65dp"
+                            android:layout_marginStart="15dp"
+                            android:background="@drawable/edit_text_border"
+                            android:inputType="number"
+                            android:textSize="24sp" />
+
+                        <Spinner
+                            android:id="@+id/spinner6"
+                            style="@android:style/Widget.DeviceDefault.Light.Spinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="65dp"
+                            android:layout_marginStart="15dp"
+                            android:background="@drawable/edit_text_border" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
 
             <View
                 android:id="@+id/divider5"
@@ -233,18 +292,63 @@
                     android:layout_gravity="center"
                     app:srcCompat="@drawable/palette" />
 
-                <HorizontalScrollView
-                    android:id="@+id/colors_scroll"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp">
+                    android:orientation="vertical">
 
                     <LinearLayout
-                        android:id="@+id/colors_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal" />
-                </HorizontalScrollView>
+                        android:layout_marginStart="16dp"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:id="@+id/current_color"
+                            android:layout_width="50dp"
+                            android:layout_height="75dp"
+                            android:layout_marginVertical="15dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_weight="1"
+                            app:srcCompat="@drawable/rectangle" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="10dp"
+                            android:layout_marginStart="20dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/rgb_color"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="20dp"
+                                android:textSize="20sp" />
+
+                            <TextView
+                                android:id="@+id/hsv_color"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="20sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <HorizontalScrollView
+                        android:id="@+id/colors_scroll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp">
+
+                        <LinearLayout
+                            android:id="@+id/colors_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal" />
+                    </HorizontalScrollView>
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -266,5 +370,19 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintGuide_begin="397dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="72dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

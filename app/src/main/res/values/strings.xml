@@ -1,20 +1,34 @@
 <resources>
     <string name="app_name">My Habits</string>
-    <string name="add_name">Добавьте название</string>
-    <string name="add_description">Добавьте описание</string>
+    <string name="add_name">Название</string>
+    <string name="add_description">Описание</string>
     <string name="save">Сохранить</string>
     <string name="choose_type">Выберите тип</string>
     <string name="choose_priority">Выберите приоритет</string>
-    <string name="repeat_number">Количество повторений</string>
+    <string name="repeat_number">Количество выполнений</string>
     <string name="periodicity">Периодичность</string>
     <string name="habit_type_1">Тип 1</string>
     <string name="habit_type_2">Тип 2</string>
     <string name="habit_type_3">Тип 3</string>
     <string name="habit_priority">Приоритет привычки</string>
-    <string name="add_execution_number">Введите количество повторений</string>
-    <string name="add_period">Добавьте периодичность</string>
+    <string name="add_period">Повторяется раз в</string>
     <string name="add_habit">Добавить привычку</string>
     <string name="close">Закрыть</string>
+    <string name="type_not_selected">Тип не выбран</string>
+    <string name="once_a">раз в</string>
+    <string name="day">День</string>
+    <string name="week">Неделя</string>
+    <string name="month">Месяц</string>
+    <string name="year">Год</string>
+    <string name="repet_num_not_specified">Не указано количество повторений</string>
+    <string name="period_not_selected">Не указана периодичность</string>
+    <string name="no_title">(Нет заголовка)</string>
+    <string name="no_description">(Нет описания)</string>
+    <string name="priority">Приоритет</string>
+    <string name="type">Тип</string>
+    <string name="color">Цвет</string>
+
+
 
     <string-array name="habit_priorities">
         <item>1</item>
@@ -27,6 +41,13 @@
         <item>8</item>
         <item>9</item>
         <item>10</item>
+    </string-array>
+
+    <string-array name="period">
+        <item>День</item>
+        <item>Неделя</item>
+        <item>Месяц</item>
+        <item>Год</item>
     </string-array>
 
 </resources>
