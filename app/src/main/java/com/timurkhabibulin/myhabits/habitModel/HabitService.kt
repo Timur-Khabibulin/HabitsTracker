@@ -1,4 +1,4 @@
-package com.timurkhabibulin.myhabits
+package com.timurkhabibulin.myhabits.habitModel
 
 typealias HabitsListener = (habits: List<Habit>) -> Unit
 

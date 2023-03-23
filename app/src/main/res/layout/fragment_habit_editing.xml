@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/habit_editing_view"
+    android:id="@+id/habit_editing_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -125,22 +124,16 @@
                         android:id="@+id/habit_type1_RB"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/habit_type_1"
+                        android:text="@string/good_habit_type"
                         android:textSize="18sp" />
 
                     <RadioButton
                         android:id="@+id/habit_type2_RB"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/habit_type_2"
+                        android:text="@string/bad_habit_type"
                         android:textSize="18sp" />
 
-                    <RadioButton
-                        android:id="@+id/habit_type3_RB"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/habit_type_3"
-                        android:textSize="18sp" />
                 </RadioGroup>
 
                 <LinearLayout

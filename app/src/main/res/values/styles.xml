@@ -13,4 +13,10 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="Widget.Theme.MyHabits.ButtonBar.Fullscreen" parent="">
+        <item name="android:background">@color/black_overlay</item>
+        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
+    </style>
+
+
 </resources>

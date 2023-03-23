@@ -3,24 +3,34 @@ package com.timurkhabibulin.myhabits
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
+import com.timurkhabibulin.myhabits.fragments.HabitListDisplayMode
+import com.timurkhabibulin.myhabits.habitModel.Habit
 import kotlinx.android.synthetic.main.habit_item.view.*
 
-class HabitsAdapter(private val onItemClick: (Int) -> Unit) :
+class HabitsAdapter(
+    private val displayMode: HabitListDisplayMode,
+    private val onItemClick: (Int) -> Unit,
+) :
     ListAdapter<Habit, HabitsViewHolder>(HabitDiffCallBack()) {
 
     var habits: List<Habit> = mutableListOf()
+    private lateinit var habitType: String
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HabitsViewHolder {
         val inflater = LayoutInflater.from(parent.context)
+
+        habitType = when (displayMode) {
+            HabitListDisplayMode.GOOD_HABITS -> parent.context.getString(R.string.good_habit_type)
+            HabitListDisplayMode.BAD_HABITS -> parent.context.getString(R.string.bad_habit_type)
+        }
+
         return HabitsViewHolder(
             inflater.inflate(
                 R.layout.habit_item,
                 parent,
                 false
             )
-        ) { itemPosition ->
-            onItemClick(itemPosition)
-        }
+        ) { itemPosition -> onItemClick(itemPosition) }
     }
 
     override fun getItemCount(): Int = habits.size
@@ -30,7 +40,7 @@ class HabitsAdapter(private val onItemClick: (Int) -> Unit) :
 
         with(holder.itemView) {
             val period =
-                habit.periodNumber.toString() + " " + resources.getString(R.string.once_a) + " " + habit.periodType
+                "${habit.periodNumber} ${resources.getString(R.string.once_a)} ${habit.periodType}"
             habit_name.text =
                 habit.name.ifEmpty { resources.getString(R.string.no_title) }
             textView2.text = habit.priority.toString()

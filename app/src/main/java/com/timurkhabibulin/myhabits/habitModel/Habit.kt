@@ -1,6 +1,7 @@
-package com.timurkhabibulin.myhabits
+package com.timurkhabibulin.myhabits.habitModel
 
 import android.graphics.Color
+
 
 data class Habit(
     val name: String,
@@ -11,5 +12,4 @@ data class Habit(
     val periodNumber: Int,
     val periodType: String,
     val color: Color
-) {
-}
+)

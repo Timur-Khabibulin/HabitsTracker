@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.MyHabits" parent="Theme.Material3.DynamicColors.DayNight">
         <!-- Primary brand color. -->
-     <!--   <item name="fontFamily">@font/roboto</item>
+        <!--   <item name="fontFamily">@font/roboto</item>
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>  -->
@@ -14,5 +14,10 @@
         <!-- Status bar color. -->
 
         <!-- Customize your theme here. -->
+    </style>
+
+    <style name="ThemeOverlay.MyHabits.FullscreenContainer" parent="">
+        <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
+        <item name="fullscreenTextColor">@color/light_blue_A200</item>
     </style>
 </resources>

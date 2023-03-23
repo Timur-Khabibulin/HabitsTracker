@@ -1,90 +1,109 @@
-package com.timurkhabibulin.myhabits
+package com.timurkhabibulin.myhabits.fragments
 
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toBitmap
-import com.google.android.material.color.DynamicColors
-import com.timurkhabibulin.myhabits.EditingActivityMode.*
-import kotlinx.android.synthetic.main.habit_editing.*
-import kotlinx.android.synthetic.main.habit_editing.view.*
+import com.timurkhabibulin.myhabits.*
+import com.timurkhabibulin.myhabits.activities.EditingActivityMode
+import com.timurkhabibulin.myhabits.activities.ITEM_POSITION_PARAM
+import com.timurkhabibulin.myhabits.habitModel.Habit
+import com.timurkhabibulin.myhabits.habitModel.HabitService
+import kotlinx.android.synthetic.main.fragment_habit_editing.*
+import kotlinx.android.synthetic.main.fragment_habit_editing.view.*
 import kotlin.math.round
 
+class HabitEditingFragment : Fragment() {
 
-enum class EditingActivityMode {
-    ADD, EDIT
-}
-
-class HabitEditingActivity : AppCompatActivity() {
     private lateinit var activityMode: EditingActivityMode
     private var itemPosition = 0
     private lateinit var habitTypeToRB: Map<String, RadioButton>
     private lateinit var habitPeriodTypeToNumber: Map<String, Int>
-    private var choosedColor = Color.valueOf(Color.WHITE)
+    private var chosenColor = Color.valueOf(Color.WHITE)
 
+    companion object {
+        @JvmStatic
+        fun newInstance(activityMode: String, itemPosition: Int) =
+            HabitEditingFragment().apply {
+                arguments = Bundle().apply {
+                    putString(EditingActivityMode::class.java.toString(), activityMode)
+                    putInt(ITEM_POSITION_PARAM, itemPosition)
+                }
+            }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.habit_editing)
-        DynamicColors.applyToActivityIfAvailable(this)
+        arguments?.let {
+            val actModeStr = it.getString(EditingActivityMode::class.java.toString()) ?: ""
+            activityMode = EditingActivityMode.valueOf(actModeStr)
+            itemPosition = it.getInt(ITEM_POSITION_PARAM)
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_habit_editing, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         bindResourcesToId()
 
-        val inputData: Bundle? = intent.extras
-
-        if (inputData != null) {
-            activityMode = valueOf(
-                inputData.getString(EditingActivityMode::class.java.toString()).toString()
-            )
-            itemPosition = inputData.getInt("itemPosition") - 1
-        }
-
         save_btn.setOnClickListener {
-            if (onSave()) finish()
+            if (onSave()) activity?.finish()
         }
 
+        setUpPrioritySpinner()
+        setUpPeriodSpinner()
+
+        close_button.setOnClickListener {
+            requireActivity().finish()
+        }
+
+        makeColorSquares()
+
+        if (activityMode == EditingActivityMode.EDIT) fillInTheFields()
+    }
+
+    private fun setUpPrioritySpinner(){
         ArrayAdapter(
-            this,
+            activity?.baseContext!!,
             R.layout.spinner_item,
             resources.getStringArray(R.array.habit_priorities)
         ).also { arrayAdapter ->
             arrayAdapter.setDropDownViewResource(R.layout.spinner_item)
             priority_spinner.adapter = arrayAdapter
         }
+    }
 
+    private fun setUpPeriodSpinner(){
         ArrayAdapter(
-            this,
+            activity?.baseContext!!,
             R.layout.spinner_item,
             resources.getStringArray(R.array.period)
         ).also { arrayAdapter ->
             arrayAdapter.setDropDownViewResource(R.layout.spinner_item)
             spinner6.adapter = arrayAdapter
         }
-
-        close_button.setOnClickListener {
-            finish()
-        }
-        makeColorSquares()
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-        printColor(choosedColor)
-        if (activityMode == EDIT) fillInTheFields()
     }
 
     private fun bindResourcesToId() {
         habitTypeToRB = mapOf(
-            resources.getString(R.string.habit_type_1) to habit_type1_RB,
-            resources.getString(R.string.habit_type_2) to habit_type2_RB,
-            resources.getString(R.string.habit_type_3) to habit_type3_RB
+            resources.getString(R.string.good_habit_type) to habit_type1_RB,
+            resources.getString(R.string.bad_habit_type) to habit_type2_RB,
         )
 
         habitPeriodTypeToNumber = mapOf(
@@ -96,6 +115,7 @@ class HabitEditingActivity : AppCompatActivity() {
     }
 
     private fun fillInTheFields() {
+
         val habit = HabitService.getHabit(itemPosition)
         name_ET.setText(habit.name)
         description_ET.setText(habit.description)
@@ -105,7 +125,8 @@ class HabitEditingActivity : AppCompatActivity() {
         editTextNumber2.setText(habit.periodNumber.toString())
         spinner6.setSelection(habitPeriodTypeToNumber[habit.periodType]!!)
         current_color.setBackgroundColor(habit.color.toArgb())
-        printColor(habit.color)
+        printColorValue(habit.color)
+        chosenColor=habit.color
     }
 
 
@@ -129,7 +150,7 @@ class HabitEditingActivity : AppCompatActivity() {
         val squareCenterY = squareWidth / 2
 
         for (i in 0..15) {
-            val square = View(this)
+            val square = View(activity)
             val params = LinearLayout.LayoutParams(squareWidth, squareWidth)
             params.setMargins(0, squareMargin, squareMargin, squareMargin)
             square.layoutParams = params
@@ -137,56 +158,57 @@ class HabitEditingActivity : AppCompatActivity() {
             val color = bitmap.getColor(squareCenterX, squareCenterY)
             square.setBackgroundColor(color.toArgb())
             square.setOnClickListener {
-                choosedColor = color
-                current_color.setBackgroundColor(choosedColor.toArgb())
-                printColor(color)
+                chosenColor = color
+                current_color.setBackgroundColor(chosenColor.toArgb())
+                printColorValue(color)
             }
             squareCenterX += squareMargin + squareWidth
         }
     }
 
     private fun onSave(): Boolean {
-        val habit = getHabit()
+        val habit = getNewHabit()
 
         if (habit != null) {
             when (activityMode) {
-                ADD -> HabitService.addHabit(habit)
-                EDIT -> HabitService.changeItem(itemPosition, habit)
+                EditingActivityMode.ADD -> HabitService.addHabit(habit)
+                EditingActivityMode.EDIT -> HabitService.changeItem(itemPosition, habit)
             }
             return true
         }
         return false
     }
 
-    private fun getHabit(): Habit? {
+    private fun getNewHabit(): Habit? {
         if (habit_type_radio_group.checkedRadioButtonId == -1) {
-            Toast.makeText(this, R.string.type_not_selected, Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, R.string.type_not_selected, Toast.LENGTH_SHORT).show()
             return null
         }
         if (editTextNumberDecimal.text.isEmpty()) {
-            Toast.makeText(this, R.string.repet_num_not_specified, Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, R.string.repet_num_not_specified, Toast.LENGTH_SHORT).show()
             return null
         }
         if (editTextNumber2.text.isEmpty()) {
-            Toast.makeText(this, R.string.period_not_selected, Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, R.string.period_not_selected, Toast.LENGTH_SHORT).show()
             return null
         }
 
-        val radioButton = findViewById<RadioButton>(habit_type_radio_group.checkedRadioButtonId)
+        val radioButton =
+            view?.findViewById<RadioButton>(habit_type_radio_group.checkedRadioButtonId)
         return Habit(
             name_ET.text.toString(),
             description_ET.text.toString(),
             priority_spinner.selectedItem.toString().toInt(),
-            radioButton.text.toString(),
+            radioButton?.text.toString(),
             editTextNumberDecimal.text.toString().toInt(),
             editTextNumber2.text.toString().toInt(),
             spinner6.selectedItem.toString(),
-            choosedColor
+            chosenColor
         )
     }
 
     @SuppressLint("SetTextI18n")
-    private fun printColor(color: Color) {
+    private fun printColorValue(color: Color) {
         val r = String.format("%.1f", color.red())
         val g = String.format("%.1f", color.green())
         val b = String.format("%.1f", color.blue())

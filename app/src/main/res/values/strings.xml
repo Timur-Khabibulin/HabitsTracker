@@ -7,9 +7,8 @@
     <string name="choose_priority">Выберите приоритет</string>
     <string name="repeat_number">Количество выполнений</string>
     <string name="periodicity">Периодичность</string>
-    <string name="habit_type_1">Тип 1</string>
-    <string name="habit_type_2">Тип 2</string>
-    <string name="habit_type_3">Тип 3</string>
+    <string name="good_habit_type">Хорошая</string>
+    <string name="bad_habit_type">Плохая</string>
     <string name="habit_priority">Приоритет привычки</string>
     <string name="add_period">Повторяется раз в</string>
     <string name="add_habit">Добавить привычку</string>
@@ -27,7 +26,14 @@
     <string name="priority">Приоритет</string>
     <string name="type">Тип</string>
     <string name="color">Цвет</string>
-
+    <string name="home_screen">Домашний экран</string>
+    <string name="about_app">О приложении</string>
+    <string name="open_drawer">Открыть</string>
+    <string name="close_drawer">Закрыть</string>
+    <string name="about_app_text">My Habits - трекер привычек.</string>
+    <string name="app_author_and_year">Тимур Хабибулин. 2023.</string>
+    <string name="good_habits">Хорошие</string>
+    <string name="bad_habits">Плохие</string>
 
 
     <string-array name="habit_priorities">
@@ -49,5 +55,9 @@
         <item>Месяц</item>
         <item>Год</item>
     </string-array>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
