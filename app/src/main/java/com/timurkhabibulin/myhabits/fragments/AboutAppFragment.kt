@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.timurkhabibulin.myhabits.R
 
+const val ABOUT_APP_FRAGMENT_NAME="AboutAppFragment"
 class AboutAppFragment : Fragment() {
 
     override fun onCreateView(

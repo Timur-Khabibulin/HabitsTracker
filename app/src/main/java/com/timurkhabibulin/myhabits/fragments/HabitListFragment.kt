@@ -1,6 +1,6 @@
 package com.timurkhabibulin.myhabits.fragments
 
-import android.content.Intent
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,21 +9,16 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.timurkhabibulin.myhabits.HabitsAdapter
 import com.timurkhabibulin.myhabits.R
-import com.timurkhabibulin.myhabits.activities.EditingActivityMode
-import com.timurkhabibulin.myhabits.activities.HabitEditingActivity
-import com.timurkhabibulin.myhabits.activities.ITEM_POSITION_PARAM
-import com.timurkhabibulin.myhabits.habitModel.Habit
 import com.timurkhabibulin.myhabits.habitModel.HabitService
+import com.timurkhabibulin.myhabits.habitModel.HabitType
 import com.timurkhabibulin.myhabits.habitModel.HabitsListener
 import kotlinx.android.synthetic.main.fragment_habit_list.*
 
-enum class HabitListDisplayMode {
-    GOOD_HABITS, BAD_HABITS
-}
+const val HABIT_LIST_FRAGMENT = "HabitListFragment"
 
 class HabitListFragment : Fragment() {
 
-    private lateinit var displayMode: HabitListDisplayMode
+    private var displayMode = HabitType.GOOD
     private lateinit var habitAdapter: HabitsAdapter
 
     private val habitsService: HabitService
@@ -34,22 +29,29 @@ class HabitListFragment : Fragment() {
     companion object {
 
         @JvmStatic
-        fun newInstance(displayMode: HabitListDisplayMode) =
+        fun newInstance(displayMode: HabitType) =
             HabitListFragment().apply {
                 arguments = Bundle().apply {
                     putString(
-                        HabitListDisplayMode::class.java.toString(),
+                        HabitType::class.java.toString(),
                         displayMode.toString()
                     )
                 }
             }
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        habitAdapter = HabitsAdapter { itemID ->
+            openHabitEditingFragment(itemID)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            val actModeStr = it.getString(HabitListDisplayMode::class.java.toString()) ?: ""
-            displayMode = HabitListDisplayMode.valueOf(actModeStr)
+            val actModeStr = it.getString(HabitType::class.java.toString()) ?: ""
+            displayMode = HabitType.valueOf(actModeStr)
         }
     }
 
@@ -67,49 +69,30 @@ class HabitListFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        updateHabitList()
+        habitsListener.invoke(habitAdapter.habits)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         habitsService.removeListener(habitsListener)
     }
 
     private fun setUpHabitList() {
-        habitAdapter = HabitsAdapter(displayMode) { itemPosition ->
-            openHabitEditingActivity(itemPosition)
-        }
-
-        habitsService.addListener(habitsListener)
+        habitsService.addListener(habitsListener, displayMode)
         val manager = LinearLayoutManager(activity)
 
         recycler_view.adapter = habitAdapter
         recycler_view.layoutManager = manager
     }
 
-    private fun openHabitEditingActivity(itemPosition: Int) {
-        val sendIntent = Intent(activity, HabitEditingActivity::class.java).apply {
-            val bundle = Bundle().apply {
-                putString(
-                    EditingActivityMode::class.java.toString(),
-                    EditingActivityMode.EDIT.toString()
-                )
-                putInt(ITEM_POSITION_PARAM, itemPosition)
-            }
-            putExtras(bundle)
-        }
-        startActivity(sendIntent)
-    }
-
-    private fun updateHabitList() {
-        mutableListOf<Habit>().addAll(habitsService.getAllHabits())
-
-        habitAdapter.submitList(habitsService.getAllHabits().filter {
-            when (displayMode) {
-                HabitListDisplayMode.GOOD_HABITS -> it.type == getString(R.string.good_habit_type)
-                HabitListDisplayMode.BAD_HABITS -> it.type == getString(R.string.bad_habit_type)
-            }
-        })
+    private fun openHabitEditingFragment(itemID: Int) {
+        val fragment = HabitEditingFragment.newInstance(EditingFragmentMode.EDIT.toString(), itemID)
+        activity?.supportFragmentManager
+            ?.beginTransaction()
+            ?.setReorderingAllowed(true)
+            ?.replace(R.id.contentFrame, fragment, HABIT_EDITING_FRAGMENT_NAME)
+            ?.addToBackStack(HABIT_EDITING_FRAGMENT_NAME)
+            ?.commit()
     }
 
 }

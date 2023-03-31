@@ -4,11 +4,11 @@
     tools:ignore="HardcodedText">
 
     <item
-        android:id="@+id/menu_home"
+        android:id="@+id/homeFragment"
         android:title="@string/home_screen" />
 
     <item
-        android:id="@+id/menu_about"
+        android:id="@+id/aboutAppFragment"
         android:title="@string/about_app" />
 
 

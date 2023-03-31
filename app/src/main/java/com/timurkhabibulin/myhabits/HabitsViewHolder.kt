@@ -11,8 +11,7 @@ class HabitsViewHolder(
 
     init {
         containerView.setOnClickListener {
-            onItemClicked(adapterPosition+1)
+            onItemClicked(adapterPosition)
         }
     }
-
 }

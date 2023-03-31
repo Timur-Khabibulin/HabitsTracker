@@ -1,30 +1,33 @@
 package com.timurkhabibulin.myhabits.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
 import com.timurkhabibulin.myhabits.PagerAdapter
 import com.timurkhabibulin.myhabits.R
-import com.timurkhabibulin.myhabits.activities.EditingActivityMode
-import com.timurkhabibulin.myhabits.activities.HabitEditingActivity
+import com.timurkhabibulin.myhabits.habitModel.HabitType
 import kotlinx.android.synthetic.main.fragment_home.*
 
+const val HOME_FRAGMENT_NAME = "HomeFragment"
+const val HABIT_TYPE_PARAM="HabitType"
+
 class HomeFragment : Fragment() {
-    private lateinit var displayMode: HabitListDisplayMode
+    private lateinit var displayMode: HabitType
 
     companion object {
 
         @JvmStatic
-        fun newInstance(displayMode: HabitListDisplayMode) =
+        fun newInstance(displayMode: HabitType) =
             HomeFragment().apply {
                 arguments = Bundle().apply {
                     putString(
-                        HabitListDisplayMode::class.java.toString(),
+                        HABIT_TYPE_PARAM,
                         displayMode.toString()
                     )
                 }
@@ -34,9 +37,17 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            val actModeStr = it.getString(HabitListDisplayMode::class.java.toString()) ?: ""
-            displayMode = HabitListDisplayMode.valueOf(actModeStr)
+            val actModeStr = it.getString(HABIT_TYPE_PARAM) ?: ""
+            displayMode = HabitType.valueOf(actModeStr)
         }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,7 +55,7 @@ class HomeFragment : Fragment() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         make_new_habit.setOnClickListener {
-            openHabitEditingActivity()
+            openHabitEditingFragment()
         }
 
         val names = listOf(getString(R.string.good_habits), getString(R.string.bad_habits))
@@ -54,27 +65,23 @@ class HomeFragment : Fragment() {
                 tab.text = names[position]
             }.attach()
         }
+
     }
 
-    private fun openHabitEditingActivity() {
-        val sendIntent = Intent(activity, HabitEditingActivity::class.java).apply {
-            val bundle = Bundle().apply {
-                putString(
-                    EditingActivityMode::class.java.toString(),
-                    EditingActivityMode.ADD.toString()
-                )
-               // putInt(ITEM_POSITION_PARAM, itemPosition)
+    private fun openHabitEditingFragment() {
+       /* findNavController().navigate(
+            R.id.habitEditingFragment,
+            Bundle().apply {
+                putString(EDITING_FRAGMENT_MODE_PARAM, EditingFragmentMode.ADD.toString())
+                putInt(ITEM_ID_PARAM, -1)
             }
-            putExtras(bundle)
-        }
-        startActivity(sendIntent)
-    }
+        )*/
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+         val fragment = HabitEditingFragment.newInstance(EditingFragmentMode.ADD.toString(), -1)
+          activity?.supportFragmentManager
+              ?.beginTransaction()
+              ?.replace(R.id.contentFrame, fragment, HABIT_EDITING_FRAGMENT_NAME)
+              ?.addToBackStack(HABIT_EDITING_FRAGMENT_NAME)
+              ?.commit()
     }
 }
