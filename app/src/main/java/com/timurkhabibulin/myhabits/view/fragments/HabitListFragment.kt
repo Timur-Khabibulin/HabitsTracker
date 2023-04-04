@@ -1,4 +1,4 @@
-package com.timurkhabibulin.myhabits.fragments
+package com.timurkhabibulin.myhabits.view.fragments
 
 import android.content.Context
 import android.os.Bundle
@@ -6,12 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.timurkhabibulin.myhabits.HabitsAdapter
+import com.timurkhabibulin.myhabits.view.HabitsAdapter
 import com.timurkhabibulin.myhabits.R
-import com.timurkhabibulin.myhabits.habitModel.HabitService
-import com.timurkhabibulin.myhabits.habitModel.HabitType
-import com.timurkhabibulin.myhabits.habitModel.HabitsListener
+import com.timurkhabibulin.myhabits.model.Habit
+import com.timurkhabibulin.myhabits.model.HabitService
+import com.timurkhabibulin.myhabits.model.HabitType
+import com.timurkhabibulin.myhabits.model.HabitsListener
+import com.timurkhabibulin.myhabits.viewmodel.HabitListViewModel
 import kotlinx.android.synthetic.main.fragment_habit_list.*
 
 const val HABIT_LIST_FRAGMENT = "HabitListFragment"
@@ -21,10 +25,7 @@ class HabitListFragment : Fragment() {
     private var displayMode = HabitType.GOOD
     private lateinit var habitAdapter: HabitsAdapter
 
-    private val habitsService: HabitService
-        get() = HabitService
-
-    private val habitsListener: HabitsListener = { habitAdapter.habits = it }
+    private lateinit var viewModel: HabitListViewModel
 
     companion object {
 
@@ -53,6 +54,12 @@ class HabitListFragment : Fragment() {
             val actModeStr = it.getString(HabitType::class.java.toString()) ?: ""
             displayMode = HabitType.valueOf(actModeStr)
         }
+
+        viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return HabitListViewModel(HabitService, displayMode) as T
+            }
+        })[HabitListViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -67,18 +74,18 @@ class HabitListFragment : Fragment() {
         setUpHabitList()
     }
 
+
     override fun onStart() {
         super.onStart()
-        habitsListener.invoke(habitAdapter.habits)
+        viewModel.habits.observe(viewLifecycleOwner, ::onHabitsLoaded)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        habitsService.removeListener(habitsListener)
+    fun onHabitsLoaded(habits: MutableList<Habit>) {
+        habitAdapter.habits = habits
+        habitAdapter.submitList(habits)
     }
 
     private fun setUpHabitList() {
-        habitsService.addListener(habitsListener, displayMode)
         val manager = LinearLayoutManager(activity)
 
         recycler_view.adapter = habitAdapter
@@ -91,7 +98,7 @@ class HabitListFragment : Fragment() {
             ?.beginTransaction()
             ?.setReorderingAllowed(true)
             ?.replace(R.id.contentFrame, fragment, HABIT_EDITING_FRAGMENT_NAME)
-            ?.addToBackStack(HABIT_EDITING_FRAGMENT_NAME)
+           // ?.addToBackStack(HABIT_EDITING_FRAGMENT_NAME)
             ?.commit()
     }
 

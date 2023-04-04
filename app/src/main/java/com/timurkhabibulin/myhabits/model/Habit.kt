@@ -1,4 +1,4 @@
-package com.timurkhabibulin.myhabits.habitModel
+package com.timurkhabibulin.myhabits.model
 
 import android.graphics.Color
 

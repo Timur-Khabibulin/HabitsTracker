@@ -34,6 +34,9 @@
     <string name="app_author_and_year">Тимур Хабибулин. 2023.</string>
     <string name="good_habits">Хорошие</string>
     <string name="bad_habits">Плохие</string>
+    <string name="sort_and_filter">Фильтры и сортировка</string>
+    <string name="sort_by">Сортировать по</string>
+    <string name="search">Поиск</string>
 
 
     <string-array name="habit_priorities">
@@ -55,6 +58,14 @@
         <item>Месяц</item>
         <item>Год</item>
     </string-array>
+
+    <string-array name="sort_types">
+        <item>Приоритету</item>
+        <item>Количеству выполнений</item>
+        <item>Количеству повторений</item>
+        <item></item>
+    </string-array>
+
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <!-- TODO: Remove or change this placeholder text -->

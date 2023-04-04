@@ -1,16 +1,14 @@
-package com.timurkhabibulin.myhabits.habitModel
+package com.timurkhabibulin.myhabits.model
 
 typealias HabitsListener = (habits: List<Habit>) -> Unit
 
 object HabitService {
-    private var listeners = mutableListOf<HabitsListener>()
     private var allHabits = mutableListOf<Habit>()
     private var idCount = 0
 
     fun addHabit(habit: Habit) {
         allHabits.add(habit)
         idCount++
-        notifyChanges()
     }
 
     fun getAllHabits(): List<Habit> {
@@ -21,20 +19,10 @@ object HabitService {
 
     fun getNextId() = ++idCount
 
-    fun addListener(listener: HabitsListener, habitType: HabitType) {
-        listeners.add(listener)
-        listener.invoke(allHabits.filter { x -> x.type == habitType })
-    }
-
     fun changeItem(itemID: Int, newValue: Habit) {
         val index = allHabits.indexOfFirst { x -> x.id == itemID }
         allHabits[index] = newValue
     }
 
-    fun removeListener(listener: HabitsListener) {
-        listeners.remove(listener)
-        listener.invoke(allHabits)
-    }
-
-    private fun notifyChanges() = listeners.forEach { it.invoke(allHabits) }
+    fun loadHabits(x: (List<Habit>) -> Unit) = x(allHabits)
 }

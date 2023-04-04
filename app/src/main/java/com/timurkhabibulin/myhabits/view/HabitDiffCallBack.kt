@@ -1,7 +1,7 @@
-package com.timurkhabibulin.myhabits
+package com.timurkhabibulin.myhabits.view
 
 import androidx.recyclerview.widget.DiffUtil
-import com.timurkhabibulin.myhabits.habitModel.Habit
+import com.timurkhabibulin.myhabits.model.Habit
 
 class HabitDiffCallBack : DiffUtil.ItemCallback<Habit>() {
     override fun areItemsTheSame(oldItem: Habit, newItem: Habit): Boolean =

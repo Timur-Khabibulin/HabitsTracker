@@ -1,4 +1,4 @@
-package com.timurkhabibulin.myhabits.fragments
+package com.timurkhabibulin.myhabits.view.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

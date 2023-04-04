@@ -1,11 +1,12 @@
-package com.timurkhabibulin.myhabits
+package com.timurkhabibulin.myhabits.view
 
 import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import com.timurkhabibulin.myhabits.habitModel.Habit
-import com.timurkhabibulin.myhabits.habitModel.HabitType
+import com.timurkhabibulin.myhabits.R
+import com.timurkhabibulin.myhabits.model.Habit
+import com.timurkhabibulin.myhabits.model.HabitType
 import kotlinx.android.synthetic.main.habit_item.view.*
 
 class HabitsAdapter(
