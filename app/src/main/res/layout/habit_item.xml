@@ -10,22 +10,24 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/habit_name"
+        android:id="@+id/habit_name_TV"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_marginHorizontal="20dp"
         android:layout_marginVertical="20dp"
         android:gravity="center_vertical"
+        android:hint="@string/no_title"
         android:textColor="#191919"
         android:textSize="26sp"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/description_TV"
+        android:id="@+id/habit_description_TV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="20dp"
+        android:hint="@string/no_description"
         android:maxLines="2"
         android:textColor="#191919"
         android:textSize="20sp" />
@@ -50,7 +52,7 @@
                 android:text="@string/priority" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/habit_priority_TV"
                 style="@style/TextViewCategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -70,7 +72,7 @@
                 android:text="@string/type" />
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/habit_type_TV"
                 style="@style/TextViewCategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -90,7 +92,7 @@
                 android:text="@string/color" />
 
             <View
-                android:id="@+id/habit_color"
+                android:id="@+id/habit_color_TV"
                 android:layout_width="80dp"
                 android:layout_height="20dp"
                 android:layout_marginStart="5dp"
@@ -115,7 +117,7 @@
             android:text="@string/periodicity" />
 
         <TextView
-            android:id="@+id/textView9"
+            android:id="@+id/habit_period_TV"
             style="@style/TextViewCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

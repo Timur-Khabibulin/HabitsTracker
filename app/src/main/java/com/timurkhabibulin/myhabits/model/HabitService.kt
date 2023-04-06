@@ -1,6 +1,5 @@
 package com.timurkhabibulin.myhabits.model
 
-typealias HabitsListener = (habits: List<Habit>) -> Unit
 
 object HabitService {
     private var allHabits = mutableListOf<Habit>()

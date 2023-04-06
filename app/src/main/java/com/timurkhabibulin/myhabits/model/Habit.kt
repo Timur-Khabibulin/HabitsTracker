@@ -2,10 +2,6 @@ package com.timurkhabibulin.myhabits.model
 
 import android.graphics.Color
 
-enum class HabitType{
-    GOOD,BAD
-}
-
 data class Habit(
     val id: Int,
     val name: String,
@@ -17,3 +13,11 @@ data class Habit(
     val periodType: String,
     val color: Color
 )
+
+enum class HabitType {
+    GOOD, BAD
+}
+
+enum class HabitSortType {
+    PRIORITY, EXECUTION_NUMBER, PERIOD_NUMBER
+}

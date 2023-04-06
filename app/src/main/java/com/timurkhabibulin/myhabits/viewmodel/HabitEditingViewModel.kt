@@ -23,11 +23,10 @@ class HabitEditingViewModel(
         mutableHabit.postValue(model.getHabit(id))
     }
 
-    fun saveHabit(habit: Habit?) {
-        if (habit != null)
-            when (mode) {
-                EditingFragmentMode.ADD -> HabitService.addHabit(habit)
-                EditingFragmentMode.EDIT -> HabitService.changeItem(id, habit)
-            }
+    fun saveHabit(habit: Habit) {
+        when (mode) {
+            EditingFragmentMode.ADD -> HabitService.addHabit(habit)
+            EditingFragmentMode.EDIT -> HabitService.changeItem(id, habit)
+        }
     }
 }

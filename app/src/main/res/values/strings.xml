@@ -63,7 +63,6 @@
         <item>Приоритету</item>
         <item>Количеству выполнений</item>
         <item>Количеству повторений</item>
-        <item></item>
     </string-array>
 
     <string name="dummy_button">Dummy Button</string>

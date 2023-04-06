@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.timurkhabibulin.myhabits.*
@@ -20,7 +20,6 @@ import com.timurkhabibulin.myhabits.model.Habit
 import com.timurkhabibulin.myhabits.model.HabitService
 import com.timurkhabibulin.myhabits.model.HabitType
 import com.timurkhabibulin.myhabits.viewmodel.HabitEditingViewModel
-import com.timurkhabibulin.myhabits.viewmodel.HabitListViewModel
 import kotlinx.android.synthetic.main.fragment_habit_editing.*
 import kotlinx.android.synthetic.main.fragment_habit_editing.view.*
 import kotlin.math.round
@@ -179,8 +178,11 @@ class HabitEditingFragment : Fragment() {
 
     private fun onCloseFragment() {
         save_btn.setOnClickListener {
-            viewModel.saveHabit(getNewHabit())
-            openMenuFragment()
+            val habit = getNewHabit()
+            if (habit != null) {
+                viewModel.saveHabit(habit)
+                openMenuFragment()
+            }
         }
         close_button.setOnClickListener { openMenuFragment() }
     }

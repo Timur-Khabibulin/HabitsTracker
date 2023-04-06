@@ -15,7 +15,7 @@ class HabitsAdapter(
     ListAdapter<Habit, HabitsViewHolder>(HabitDiffCallBack()) {
 
     var habits: List<Habit> = mutableListOf()
-    private lateinit var habitType: String
+    // var habitsFiltered: List<Habit> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HabitsViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -38,14 +38,12 @@ class HabitsAdapter(
         with(holder.itemView) {
             val period =
                 "${habit.periodNumber} ${resources.getString(R.string.once_a)} ${habit.periodType}"
-            habit_name.text =
-                habit.name.ifEmpty { resources.getString(R.string.no_title) }
-            textView2.text = habit.priority.toString()
-            textView5.text = habitTypeToString[habit.type]
-            habit_color.setBackgroundColor(habit.color.toArgb())
-            textView9.text = period
-            description_TV.text =
-                habit.description.ifEmpty { resources.getString(R.string.no_description) }
+            if (habit.name.isNotEmpty()) habit_name_TV.text = habit.name
+            if (habit.description.isNotEmpty()) habit_description_TV.text = habit.description
+            habit_priority_TV.text = habit.priority.toString()
+            habit_type_TV.text = habitTypeToString[habit.type]
+            habit_color_TV.setBackgroundColor(habit.color.toArgb())
+            habit_period_TV.text = period
         }
     }
 
@@ -54,5 +52,36 @@ class HabitsAdapter(
             HabitType.GOOD to resources.getString(R.string.good_habit_type),
             HabitType.BAD to resources.getString(R.string.bad_habit_type)
         )
+
+    /* override fun getFilter(): Filter {
+         return object : Filter() {
+             override fun performFiltering(nameConstraint: CharSequence?): FilterResults {
+                 val constraint = nameConstraint?.toString() ?: ""
+
+                 if (constraint.isEmpty()) habitsFiltered = habits
+                 else {
+                     val filteredList = mutableListOf<Habit>()
+
+                     habits.filter {
+                         it.name.lowercase(Locale.getDefault()).contains(constraint)
+                     }.forEach {
+                         filteredList.add(it)
+                     }
+
+                     habitsFiltered = filteredList
+                 }
+
+                 return FilterResults().apply { values = habitsFiltered }
+             }
+
+             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                 habitsFiltered = if (results?.values == null) mutableListOf()
+                 else results.values as MutableList<Habit>
+
+                 submitList(habitsFiltered)
+             }
+
+         }
+     }*/
 
 }

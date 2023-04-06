@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.fragment.app.Fragment
 import com.timurkhabibulin.myhabits.R
-import com.timurkhabibulin.myhabits.model.HabitType
 import kotlinx.android.synthetic.main.fragment_menu.*
 import kotlinx.android.synthetic.main.toolbar.*
 
@@ -17,7 +16,6 @@ class MenuFargment : Fragment() {
     private lateinit var drawerToggle: ActionBarDrawerToggle
 
     companion object {
-
         @JvmStatic
         fun newInstance() = MenuFargment()
     }
@@ -33,7 +31,7 @@ class MenuFargment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        addChildFragment(HomeFragment.newInstance(HabitType.GOOD), HOME_FRAGMENT_NAME)
+        addChildFragment(HomeFragment.newInstance(), HOME_FRAGMENT_NAME)
         setUpDrawerToggle()
         setNavItemSelectedListener()
     }
@@ -64,14 +62,13 @@ class MenuFargment : Fragment() {
             when (it.itemId) {
                 R.id.homeFragment ->
                     replaceChildFragment(
-                        HomeFragment.newInstance(HabitType.GOOD),
+                        HomeFragment.newInstance(),
                         HOME_FRAGMENT_NAME
                     )
                 R.id.aboutAppFragment -> replaceChildFragment(
                     AboutAppFragment.newInstance(),
                     ABOUT_APP_FRAGMENT_NAME
                 )
-                else -> false
             }
             true
         }

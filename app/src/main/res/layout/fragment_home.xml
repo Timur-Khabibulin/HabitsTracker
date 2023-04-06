@@ -32,8 +32,15 @@
         android:id="@+id/bottomSheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_anchor="@id/habitList"
-        app:layout_anchorGravity="bottom|end"/>
+        app:behavior_peekHeight="65dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <fragment
+            android:name="com.timurkhabibulin.myhabits.view.fragments.HabitFilterFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/make_new_habit"
@@ -44,7 +51,7 @@
         android:clickable="true"
         android:contentDescription="@string/add_habit"
         android:src="@drawable/add_icon"
-        app:layout_anchor="@+id/habitFilter"
-        app:layout_anchorGravity="top|end"/>
+        app:layout_anchor="@+id/bottomSheet"
+        app:layout_anchorGravity="top|end" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
