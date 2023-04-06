@@ -1,10 +1,9 @@
-package com.timurkhabibulin.myhabits.fragments
+package com.timurkhabibulin.myhabits.view.fragments
 
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +12,14 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.timurkhabibulin.myhabits.*
-import com.timurkhabibulin.myhabits.habitModel.Habit
-import com.timurkhabibulin.myhabits.habitModel.HabitService
-import com.timurkhabibulin.myhabits.habitModel.HabitType
+import com.timurkhabibulin.myhabits.model.Habit
+import com.timurkhabibulin.myhabits.model.HabitService
+import com.timurkhabibulin.myhabits.model.HabitType
+import com.timurkhabibulin.myhabits.viewmodel.HabitEditingViewModel
 import kotlinx.android.synthetic.main.fragment_habit_editing.*
 import kotlinx.android.synthetic.main.fragment_habit_editing.view.*
 import kotlin.math.round
@@ -27,7 +29,7 @@ enum class EditingFragmentMode {
 }
 
 const val ITEM_ID_PARAM = "itemID"
-const val EDITING_FRAGMENT_MODE_PARAM="EditingFragmentMode"
+const val EDITING_FRAGMENT_MODE_PARAM = "EditingFragmentMode"
 const val HABIT_EDITING_FRAGMENT_NAME = "HabitEditingFragment"
 
 class HabitEditingFragment : Fragment() {
@@ -37,6 +39,8 @@ class HabitEditingFragment : Fragment() {
     private lateinit var habitTypeToRB: Map<HabitType, RadioButton>
     private lateinit var habitPeriodTypeToNumber: Map<String, Int>
     private var chosenColor = Color.valueOf(Color.WHITE)
+
+    private lateinit var viewModel: HabitEditingViewModel
 
     companion object {
         @JvmStatic
@@ -56,6 +60,12 @@ class HabitEditingFragment : Fragment() {
             activityMode = EditingFragmentMode.valueOf(actModeStr)
             itemID = it.getInt(ITEM_ID_PARAM)
         }
+
+        viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return HabitEditingViewModel(HabitService, activityMode, itemID) as T
+            }
+        })[HabitEditingViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -68,6 +78,8 @@ class HabitEditingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.habit.observe(viewLifecycleOwner, ::fillInTheFields)
+
         bindResourcesToId()
 
         onCloseFragment()
@@ -77,7 +89,6 @@ class HabitEditingFragment : Fragment() {
 
         makeColorSquares()
 
-        if (activityMode == EditingFragmentMode.EDIT) fillInTheFields()
     }
 
     private fun setUpPrioritySpinner() {
@@ -116,21 +127,17 @@ class HabitEditingFragment : Fragment() {
         )
     }
 
-    private fun fillInTheFields() {
-
-        val habit = HabitService.getHabit(itemID)
-        if (habit != null) {
-            name_ET.setText(habit.name)
-            description_ET.setText(habit.description)
-            habit_type_radio_group.check(habitTypeToRB[habit.type]!!.id)
-            priority_spinner.setSelection(habit.priority - 1)
-            editTextNumberDecimal.setText(habit.executionNumber.toString())
-            editTextNumber2.setText(habit.periodNumber.toString())
-            spinner6.setSelection(habitPeriodTypeToNumber[habit.periodType]!!)
-            current_color.setBackgroundColor(habit.color.toArgb())
-            printColorValue(habit.color)
-            chosenColor = habit.color
-        }
+    private fun fillInTheFields(habit: Habit) {
+        name_ET.setText(habit.name)
+        description_ET.setText(habit.description)
+        habit_type_radio_group.check(habitTypeToRB[habit.type]!!.id)
+        priority_spinner.setSelection(habit.priority - 1)
+        editTextNumberDecimal.setText(habit.executionNumber.toString())
+        editTextNumber2.setText(habit.periodNumber.toString())
+        spinner6.setSelection(habitPeriodTypeToNumber[habit.periodType]!!)
+        current_color.setBackgroundColor(habit.color.toArgb())
+        printColorValue(habit.color)
+        chosenColor = habit.color
     }
 
     private fun makeColorSquares() {
@@ -169,37 +176,22 @@ class HabitEditingFragment : Fragment() {
         }
     }
 
-    private fun onSave(): Boolean {
-        val habit = getNewHabit()
-
-        if (habit != null) {
-            when (activityMode) {
-                EditingFragmentMode.ADD -> HabitService.addHabit(habit)
-                EditingFragmentMode.EDIT -> HabitService.changeItem(itemID, habit)
-            }
-            return true
-        }
-        return false
-    }
-
     private fun onCloseFragment() {
-        save_btn.setOnClickListener { if (onSave()) openMenuFragment() }
+        save_btn.setOnClickListener {
+            val habit = getNewHabit()
+            if (habit != null) {
+                viewModel.saveHabit(habit)
+                openMenuFragment()
+            }
+        }
         close_button.setOnClickListener { openMenuFragment() }
     }
 
     private fun openMenuFragment() {
-       // findNavController().popBackStack()
-        // if (savedInstanceState == null) {
-      /*  parentFragmentManager
-            .beginTransaction()
-            .replace(R.id.contentFrame, MenuFargment.newInstance(), MENU_FRAGMENT_NAME)
-            .commit()*/
-        activity?.supportFragmentManager?.popBackStack()
-       /*    activity?.supportFragmentManager
-               ?.beginTransaction()
-               ?.replace(R.id.contentFrame, MenuFargment.newInstance())
-               ?.commit()*/
-        //  }
+        activity?.supportFragmentManager
+            ?.beginTransaction()
+            ?.replace(R.id.contentFrame, MenuFargment.newInstance())
+            ?.commit()
     }
 
     private fun getNewHabit(): Habit? {
@@ -224,7 +216,6 @@ class HabitEditingFragment : Fragment() {
             description_ET.text.toString(),
             priority_spinner.selectedItem.toString().toInt(),
             habitTypeToRB.filterValues { it == radioButton }.keys.first(),
-            // radioButton?.text.toString(),
             editTextNumberDecimal.text.toString().toInt(),
             editTextNumber2.text.toString().toInt(),
             spinner6.selectedItem.toString(),

@@ -1,4 +1,4 @@
-package com.timurkhabibulin.myhabits
+package com.timurkhabibulin.myhabits.view
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
