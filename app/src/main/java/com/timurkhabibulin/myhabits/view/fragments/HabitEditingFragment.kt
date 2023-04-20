@@ -7,18 +7,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.LinearLayout
-import android.widget.RadioButton
-import android.widget.Toast
+import android.widget.*
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.timurkhabibulin.myhabits.*
 import com.timurkhabibulin.myhabits.model.Habit
-import com.timurkhabibulin.myhabits.model.HabitService
 import com.timurkhabibulin.myhabits.model.HabitType
+import com.timurkhabibulin.myhabits.model.db.AppDatabase
+import com.timurkhabibulin.myhabits.model.db.HabitsRepository
 import com.timurkhabibulin.myhabits.viewmodel.HabitEditingViewModel
 import kotlinx.android.synthetic.main.fragment_habit_editing.*
 import kotlinx.android.synthetic.main.fragment_habit_editing.view.*
@@ -34,7 +32,7 @@ const val HABIT_EDITING_FRAGMENT_NAME = "HabitEditingFragment"
 
 class HabitEditingFragment : Fragment() {
 
-    private lateinit var activityMode: EditingFragmentMode
+    private lateinit var fragmentMode: EditingFragmentMode
     private var itemID = 0
     private lateinit var habitTypeToRB: Map<HabitType, RadioButton>
     private lateinit var habitPeriodTypeToNumber: Map<String, Int>
@@ -57,15 +55,11 @@ class HabitEditingFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             val actModeStr = it.getString(EDITING_FRAGMENT_MODE_PARAM) ?: ""
-            activityMode = EditingFragmentMode.valueOf(actModeStr)
+            fragmentMode = EditingFragmentMode.valueOf(actModeStr)
             itemID = it.getInt(ITEM_ID_PARAM)
         }
 
-        viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return HabitEditingViewModel(HabitService, activityMode, itemID) as T
-            }
-        })[HabitEditingViewModel::class.java]
+        createViewModel()
     }
 
     override fun onCreateView(
@@ -78,7 +72,8 @@ class HabitEditingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.habit.observe(viewLifecycleOwner, ::fillInTheFields)
+        if (fragmentMode == EditingFragmentMode.EDIT)
+            viewModel.habit.observe(viewLifecycleOwner, ::fillInTheFields)
 
         bindResourcesToId()
 
@@ -88,7 +83,41 @@ class HabitEditingFragment : Fragment() {
         setUpPeriodSpinner()
 
         makeColorSquares()
+    }
 
+    override fun onPause() {
+        super.onPause()
+        if (fragmentMode == EditingFragmentMode.EDIT)
+            saveFieldsState()
+    }
+
+    private fun createViewModel() {
+        val db = AppDatabase.getDatabase(requireContext().applicationContext)
+        val repository = HabitsRepository(db.habitDao())
+
+        viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return HabitEditingViewModel(repository, fragmentMode, itemID) as T
+            }
+        })[HabitEditingViewModel::class.java]
+    }
+
+    private fun saveFieldsState() {
+        val habit = viewModel.habit.value!!
+        val radioButton =
+            view?.findViewById<RadioButton>(habit_type_radio_group.checkedRadioButtonId)
+        habit.name = name_ET.text.toString()
+        habit.description = description_ET.text.toString()
+        habit.priority = priority_spinner.selectedItem.toString().toInt()
+        habit.type = habitTypeToRB.filterValues { it == radioButton }.keys.first()
+        if (editTextNumberDecimal.text.isNotEmpty())
+            habit.executionNumber = editTextNumberDecimal.text.toString().toInt()
+        if (editTextNumber2.text.isNotEmpty())
+            habit.periodNumber = editTextNumber2.text.toString().toInt()
+        habit.periodType = spinner6.selectedItem.toString()
+        habit.color = chosenColor
+
+        viewModel.saveState(habit)
     }
 
     private fun setUpPrioritySpinner() {
@@ -190,7 +219,7 @@ class HabitEditingFragment : Fragment() {
     private fun openMenuFragment() {
         activity?.supportFragmentManager
             ?.beginTransaction()
-            ?.replace(R.id.contentFrame, MenuFargment.newInstance())
+            ?.replace(R.id.rootFragment, MenuFargment.newInstance())
             ?.commit()
     }
 
@@ -211,7 +240,7 @@ class HabitEditingFragment : Fragment() {
         val radioButton =
             view?.findViewById<RadioButton>(habit_type_radio_group.checkedRadioButtonId)
         return Habit(
-            HabitService.getNextId(),
+            if (fragmentMode == EditingFragmentMode.EDIT) viewModel.habit.value!!.id else -1,
             name_ET.text.toString(),
             description_ET.text.toString(),
             priority_spinner.selectedItem.toString().toInt(),
@@ -222,6 +251,7 @@ class HabitEditingFragment : Fragment() {
             chosenColor
         )
     }
+
 
     @SuppressLint("SetTextI18n")
     private fun printColorValue(color: Color) {
