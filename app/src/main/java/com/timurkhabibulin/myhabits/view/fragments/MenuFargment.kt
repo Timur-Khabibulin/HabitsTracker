@@ -6,12 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.timurkhabibulin.myhabits.R
+import com.timurkhabibulin.myhabits.model.db.AppDatabase
+import com.timurkhabibulin.myhabits.model.db.HabitsRepository
+import com.timurkhabibulin.myhabits.viewmodel.HabitListViewModel
 import kotlinx.android.synthetic.main.fragment_menu.*
 import kotlinx.android.synthetic.main.toolbar.*
 
 const val MENU_FRAGMENT_NAME = "MenuFargment"
 
+@Suppress("UNCHECKED_CAST")
 class MenuFargment : Fragment() {
     private lateinit var drawerToggle: ActionBarDrawerToggle
 
@@ -20,6 +26,10 @@ class MenuFargment : Fragment() {
         fun newInstance() = MenuFargment()
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        createListFragmentViewModel()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,15 +41,26 @@ class MenuFargment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        addChildFragment(HomeFragment.newInstance(), HOME_FRAGMENT_NAME)
+        addHomeFragment(HomeFragment.newInstance())
         setUpDrawerToggle()
         setNavItemSelectedListener()
     }
 
-    private fun addChildFragment(fragment: Fragment, tag: String) {
+    private fun createListFragmentViewModel() {
+        val db = AppDatabase.getDatabase(requireContext().applicationContext)
+        val repository = HabitsRepository(db.habitDao())
+
+        ViewModelProvider(requireActivity(), object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return HabitListViewModel(repository) as T
+            }
+        })[HabitListViewModel::class.java]
+    }
+
+    private fun addHomeFragment(fragment: Fragment) {
         childFragmentManager
             .beginTransaction()
-            .add(R.id.contentFrame, fragment, tag)
+            .add(R.id.menuContent, fragment, HOME_FRAGMENT_NAME)
             .commit()
     }
 
@@ -76,7 +97,7 @@ class MenuFargment : Fragment() {
 
     private fun replaceChildFragment(fragment: Fragment, tag: String) {
         childFragmentManager.beginTransaction()
-            .replace(R.id.contentFrame, fragment, tag)
+            .replace(R.id.menuContent, fragment, tag)
             .commit()
     }
 }

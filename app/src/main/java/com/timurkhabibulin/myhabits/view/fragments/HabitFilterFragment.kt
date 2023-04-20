@@ -21,11 +21,6 @@ class HabitFilterFragment : Fragment() {
     private var sortDirection = SortDirection.ASCENDING
     private var sortType = HabitSortType.PRIORITY
 
-    companion object {
-        @JvmStatic
-        fun newInstance() = HabitFilterFragment()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
