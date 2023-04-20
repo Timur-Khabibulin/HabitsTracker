@@ -1,32 +1,35 @@
 package com.timurkhabibulin.myhabits.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.timurkhabibulin.myhabits.model.Habit
-import com.timurkhabibulin.myhabits.model.HabitService
+import com.timurkhabibulin.myhabits.model.db.HabitsRepository
 import com.timurkhabibulin.myhabits.view.fragments.EditingFragmentMode
 
 class HabitEditingViewModel(
-    private val model: HabitService,
+    private val repository: HabitsRepository,
     private val mode: EditingFragmentMode,
-    private val id: Int
+    id: Int
 ) : ViewModel() {
     private val mutableHabit = MutableLiveData<Habit>()
 
-    val habit = mutableHabit
+    lateinit var habit: LiveData<Habit>
 
     init {
-        if (mode == EditingFragmentMode.EDIT) loadHabit()
+        if (mode == EditingFragmentMode.EDIT) {
+            habit = repository.findById(id)
+        }
     }
 
-    private fun loadHabit() {
-        mutableHabit.postValue(model.getHabit(id))
+    fun saveState(habit: Habit) {
+        mutableHabit.postValue(habit)
     }
 
     fun saveHabit(habit: Habit) {
         when (mode) {
-            EditingFragmentMode.ADD -> HabitService.addHabit(habit)
-            EditingFragmentMode.EDIT -> HabitService.changeItem(id, habit)
+            EditingFragmentMode.ADD -> repository.insert(habit)
+            EditingFragmentMode.EDIT -> repository.update(habit)
         }
     }
 }

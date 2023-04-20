@@ -5,7 +5,7 @@ import com.timurkhabibulin.myhabits.model.Habit
 
 class HabitDiffCallBack : DiffUtil.ItemCallback<Habit>() {
     override fun areItemsTheSame(oldItem: Habit, newItem: Habit): Boolean =
-        oldItem == newItem
+        oldItem.id == newItem.id
 
     override fun areContentsTheSame(oldItem: Habit, newItem: Habit): Boolean =
         oldItem == newItem
