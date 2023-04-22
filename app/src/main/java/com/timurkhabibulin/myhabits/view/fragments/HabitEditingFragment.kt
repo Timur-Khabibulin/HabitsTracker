@@ -240,7 +240,7 @@ class HabitEditingFragment : Fragment() {
         val radioButton =
             view?.findViewById<RadioButton>(habit_type_radio_group.checkedRadioButtonId)
         return Habit(
-            if (fragmentMode == EditingFragmentMode.EDIT) viewModel.habit.value!!.id else -1,
+            if (fragmentMode == EditingFragmentMode.EDIT) viewModel.habit.value!!.id else 0,
             name_ET.text.toString(),
             description_ET.text.toString(),
             priority_spinner.selectedItem.toString().toInt(),

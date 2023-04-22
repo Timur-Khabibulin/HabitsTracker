@@ -16,8 +16,10 @@ data class HabitDbEntity(
     var executionNumber: Int,
     var periodNumber: Int,
     var periodType: String,
-    var color: Int
+    var color: Color
 ) {
+    //   @PrimaryKey(autoGenerate = true)
+    // val id: Int? = 0
     fun toHabit(): Habit =
         Habit(
             id,
@@ -28,13 +30,13 @@ data class HabitDbEntity(
             executionNumber,
             periodNumber,
             periodType,
-            Color.valueOf(color)
+            color
         )
 
     companion object {
         fun fromHabit(habit: Habit): HabitDbEntity =
             HabitDbEntity(
-                if (habit.id == -1) 0 else habit.id,
+               habit.id,
                 habit.name,
                 habit.description,
                 habit.priority,
@@ -42,7 +44,7 @@ data class HabitDbEntity(
                 habit.executionNumber,
                 habit.periodNumber,
                 habit.periodType,
-                habit.color.toArgb()
+                habit.color
             )
     }
 }
