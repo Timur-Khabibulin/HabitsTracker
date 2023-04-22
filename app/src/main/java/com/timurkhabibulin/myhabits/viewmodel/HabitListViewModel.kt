@@ -52,16 +52,6 @@ class HabitListViewModel(
         }
     }
 
-    fun removeObservers(
-        habitType: HabitType,
-        lifecycleOwner: LifecycleOwner,
-    ) {
-        when (habitType) {
-            HabitType.GOOD -> goodHabits.removeObservers(lifecycleOwner)
-            HabitType.BAD -> badHabits.removeObservers(lifecycleOwner)
-        }
-    }
-
     private fun loadHabits() {
         badHabits.addSource(mutableBadHabits) {
             badHabits.postValue(it)
