@@ -11,10 +11,10 @@ interface HabitDao {
     fun getAll(): LiveData<List<HabitDbEntity>>
 
     @Insert
-    fun insert(habit: HabitDbEntity)
+    suspend fun insert(habit: HabitDbEntity)
 
     @Update
-    fun update(habit: HabitDbEntity)
+    suspend fun update(habit: HabitDbEntity)
 
     @Query("SELECT * FROM Habits WHERE id LIKE :id")
     fun findById(id: Int): LiveData<HabitDbEntity>

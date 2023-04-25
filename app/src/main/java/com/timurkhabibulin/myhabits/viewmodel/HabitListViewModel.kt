@@ -1,15 +1,14 @@
 package com.timurkhabibulin.myhabits.viewmodel
 
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.timurkhabibulin.myhabits.model.Habit
 import com.timurkhabibulin.myhabits.model.HabitSortType
 import com.timurkhabibulin.myhabits.model.HabitType
 import com.timurkhabibulin.myhabits.model.db.HabitsRepository
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class HabitListViewModel(
@@ -27,39 +26,47 @@ class HabitListViewModel(
     private val goodHabits = MediatorLiveData<List<Habit>>()
     private val badHabits = MediatorLiveData<List<Habit>>()
 
+    private val coroutineExceptionHandler =
+        CoroutineExceptionHandler { _, exception -> throw exception }
+
     init {
         loadHabits()
     }
 
-    fun sortHabits(sortType: HabitSortType, sortDirection: SortDirection) {
-        mutableGoodHabits.sortAndPut(sortType, sortDirection, goodHabits)
-        mutableBadHabits.sortAndPut(sortType, sortDirection, badHabits)
-    }
+    fun sortHabits(sortType: HabitSortType, sortDirection: SortDirection) =
+        viewModelScope.launch(coroutineExceptionHandler) {
+            mutableGoodHabits.sortAndPut(sortType, sortDirection, goodHabits)
+            mutableBadHabits.sortAndPut(sortType, sortDirection, badHabits)
+        }
 
-    fun filterHabitsByName(filter: String) {
-        mutableGoodHabits.filterAndPut(filter, goodHabits)
-        mutableBadHabits.filterAndPut(filter, badHabits)
-    }
+    fun filterHabitsByName(filter: String) =
+        viewModelScope.launch(coroutineExceptionHandler) {
+            mutableGoodHabits.filterAndPut(filter, goodHabits)
+            mutableBadHabits.filterAndPut(filter, badHabits)
+        }
 
     fun addObservers(
         habitType: HabitType,
         lifecycleOwner: LifecycleOwner,
         observer: Observer<List<Habit>?>
-    ) {
+    ) = viewModelScope.launch(coroutineExceptionHandler) {
         when (habitType) {
             HabitType.GOOD -> goodHabits.observe(lifecycleOwner, observer)
             HabitType.BAD -> badHabits.observe(lifecycleOwner, observer)
         }
     }
 
-    private fun loadHabits() {
-        badHabits.addSource(mutableBadHabits) {
-            badHabits.postValue(it)
+    private fun loadHabits() =
+        viewModelScope.launch(coroutineExceptionHandler) {
+            withContext(Dispatchers.IO) {
+                badHabits.addSource(mutableBadHabits) {
+                    badHabits.postValue(it)
+                }
+                goodHabits.addSource(mutableGoodHabits) {
+                    goodHabits.postValue(it)
+                }
+            }
         }
-        goodHabits.addSource(mutableGoodHabits) {
-            goodHabits.postValue(it)
-        }
-    }
 
     private fun LiveData<List<Habit>>.sortAndPut(
         sortType: HabitSortType,

@@ -8,24 +8,25 @@ class HabitsRepository(
     private val habitDao: HabitDao
 ) {
 
-    fun getAll(): LiveData<List<Habit>> {
+     fun getAll(): LiveData<List<Habit>> {
         return Transformations.map(habitDao.getAll()) {
             return@map it.map { x -> x.toHabit() }
         }
     }
 
-    fun insert(habit: Habit) {
+    suspend fun insert(habit: Habit) {
         val entity = HabitDbEntity.fromHabit(habit)
         habitDao.insert(entity)
     }
 
-    fun update(habit: Habit) {
+    suspend fun update(habit: Habit) {
         habitDao.update(HabitDbEntity.fromHabit(habit))
     }
 
-    fun findById(id: Int): LiveData<Habit> {
+     fun findById(id: Int): LiveData<Habit> {
         return Transformations.map(habitDao.findById(id)) {
             return@map it.toHabit()
         }
     }
+
 }
