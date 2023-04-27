@@ -35,14 +35,18 @@ class HabitListViewModel(
 
     fun sortHabits(sortType: HabitSortType, sortDirection: SortDirection) =
         viewModelScope.launch(coroutineExceptionHandler) {
-            mutableGoodHabits.sortAndPut(sortType, sortDirection, goodHabits)
-            mutableBadHabits.sortAndPut(sortType, sortDirection, badHabits)
+            withContext(Dispatchers.Default) {
+                mutableGoodHabits.sortAndPut(sortType, sortDirection, goodHabits)
+                mutableBadHabits.sortAndPut(sortType, sortDirection, badHabits)
+            }
         }
 
     fun filterHabitsByName(filter: String) =
         viewModelScope.launch(coroutineExceptionHandler) {
-            mutableGoodHabits.filterAndPut(filter, goodHabits)
-            mutableBadHabits.filterAndPut(filter, badHabits)
+            withContext(Dispatchers.Default) {
+                mutableGoodHabits.filterAndPut(filter, goodHabits)
+                mutableBadHabits.filterAndPut(filter, badHabits)
+            }
         }
 
     fun addObservers(
