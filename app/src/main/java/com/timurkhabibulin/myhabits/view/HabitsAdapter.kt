@@ -10,7 +10,7 @@ import com.timurkhabibulin.myhabits.model.HabitType
 import kotlinx.android.synthetic.main.habit_item.view.*
 
 class HabitsAdapter(
-    private val onItemClick: (Int) -> Unit,
+    private val onItemClick: (Long) -> Unit,
 ) :
     ListAdapter<Habit, HabitsViewHolder>(HabitDiffCallBack()) {
 
@@ -23,7 +23,7 @@ class HabitsAdapter(
                 parent,
                 false
             )
-        ) { itemPosition -> onItemClick(getItem(itemPosition).id) }
+        ) { itemPosition -> onItemClick(getItem(itemPosition).internalID) }
     }
 
     override fun onBindViewHolder(holder: HabitsViewHolder, position: Int) {

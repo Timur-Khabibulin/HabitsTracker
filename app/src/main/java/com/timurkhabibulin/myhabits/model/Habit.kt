@@ -3,7 +3,6 @@ package com.timurkhabibulin.myhabits.model
 import android.graphics.Color
 
 data class Habit(
-    val id: Int,
     var name: String,
     var description: String,
     var priority: Int,
@@ -11,5 +10,9 @@ data class Habit(
     var executionNumber: Int,
     var periodNumber: Int,
     var periodType: String,
-    var color: Color
-)
+    var color: Color,
+) {
+    var internalID: Long = 0
+    var networkID: String = ""
+    var isSynced: Boolean = false
+}

@@ -1,33 +1,28 @@
 package com.timurkhabibulin.myhabits.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.timurkhabibulin.myhabits.model.Habit
 import com.timurkhabibulin.myhabits.model.HabitSortType
 import com.timurkhabibulin.myhabits.model.HabitType
-import com.timurkhabibulin.myhabits.model.db.HabitsRepository
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.timurkhabibulin.myhabits.network.HabitService
+import kotlinx.coroutines.*
 
 
 class HabitListViewModel(
-    repository: HabitsRepository
+    private val habitService: HabitService
 ) : ViewModel() {
 
-    private val mutableGoodHabits = Transformations.map(repository.getAll()) {
-        it.filter { x -> x.type == HabitType.GOOD }
-    }
-
-    private val mutableBadHabits = Transformations.map(repository.getAll()) {
-        it.filter { x -> x.type == HabitType.BAD }
-    }
+    private var sourceGoodHabits = MediatorLiveData<List<Habit>>()
+    private var mutableBadHabits = MediatorLiveData<List<Habit>>()
 
     private val goodHabits = MediatorLiveData<List<Habit>>()
     private val badHabits = MediatorLiveData<List<Habit>>()
 
     private val coroutineExceptionHandler =
-        CoroutineExceptionHandler { _, exception -> throw exception }
+        CoroutineExceptionHandler { _, exception ->
+            Log.e("viewModelScope", "$exception")
+        }
 
     init {
         loadHabits()
@@ -36,15 +31,15 @@ class HabitListViewModel(
     fun sortHabits(sortType: HabitSortType, sortDirection: SortDirection) =
         viewModelScope.launch(coroutineExceptionHandler) {
             withContext(Dispatchers.Default) {
-                mutableGoodHabits.sortAndPut(sortType, sortDirection, goodHabits)
-                mutableBadHabits.sortAndPut(sortType, sortDirection, badHabits)
+                goodHabits.sort(sortType, sortDirection)
+                badHabits.sort(sortType, sortDirection)
             }
         }
 
     fun filterHabitsByName(filter: String) =
         viewModelScope.launch(coroutineExceptionHandler) {
             withContext(Dispatchers.Default) {
-                mutableGoodHabits.filterAndPut(filter, goodHabits)
+                sourceGoodHabits.filterAndPut(filter, goodHabits)
                 mutableBadHabits.filterAndPut(filter, badHabits)
             }
         }
@@ -63,30 +58,38 @@ class HabitListViewModel(
     private fun loadHabits() =
         viewModelScope.launch(coroutineExceptionHandler) {
             withContext(Dispatchers.IO) {
+
+                sourceGoodHabits.addSource(habitService.getAll().asLiveData()) {
+                    sourceGoodHabits.postValue(it.filter { x -> x.type == HabitType.GOOD })
+                }
+                mutableBadHabits.addSource(habitService.getAll().asLiveData()) {
+                    mutableBadHabits.postValue(it.filter { x -> x.type == HabitType.BAD })
+                }
+
+                goodHabits.addSource(sourceGoodHabits) {
+                    goodHabits.postValue(it)
+                }
                 badHabits.addSource(mutableBadHabits) {
                     badHabits.postValue(it)
                 }
-                goodHabits.addSource(mutableGoodHabits) {
-                    goodHabits.postValue(it)
-                }
+                habitService.synchronizeWithNetwork()
             }
         }
 
-    private fun LiveData<List<Habit>>.sortAndPut(
+    private fun MediatorLiveData<List<Habit>>.sort(
         sortType: HabitSortType,
-        sortDirection: SortDirection,
-        putInto: MediatorLiveData<List<Habit>>
+        sortDirection: SortDirection
     ) {
-        this.value.let {
-            putInto.postValue(when (sortDirection) {
-                SortDirection.ASCENDING -> it?.sortedBy { habit ->
+        this.value?.let {
+            this.postValue(when (sortDirection) {
+                SortDirection.ASCENDING -> it.sortedBy { habit ->
                     when (sortType) {
                         HabitSortType.PRIORITY -> habit.priority
                         HabitSortType.EXECUTION_NUMBER -> habit.executionNumber
                         HabitSortType.PERIOD_NUMBER -> habit.periodNumber
                     }
                 }
-                SortDirection.DESCENDING -> it?.sortedByDescending { habit ->
+                SortDirection.DESCENDING -> it.sortedByDescending { habit ->
                     when (sortType) {
                         HabitSortType.PRIORITY -> habit.priority
                         HabitSortType.EXECUTION_NUMBER -> habit.executionNumber
@@ -97,7 +100,7 @@ class HabitListViewModel(
         }
     }
 
-    private fun LiveData<List<Habit>>.filterAndPut(
+    private fun MediatorLiveData<List<Habit>>.filterAndPut(
         filter: String,
         putInto: MediatorLiveData<List<Habit>>
     ) {

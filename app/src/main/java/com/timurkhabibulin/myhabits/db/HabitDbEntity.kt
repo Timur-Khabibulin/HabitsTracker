@@ -1,4 +1,4 @@
-package com.timurkhabibulin.myhabits.model.db
+package com.timurkhabibulin.myhabits.db
 
 import android.graphics.Color
 import androidx.room.Entity
@@ -8,7 +8,7 @@ import com.timurkhabibulin.myhabits.model.HabitType
 
 @Entity(tableName = "Habits")
 data class HabitDbEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Long,
     var name: String,
     var description: String,
     var priority: Int,
@@ -16,13 +16,13 @@ data class HabitDbEntity(
     var executionNumber: Int,
     var periodNumber: Int,
     var periodType: String,
-    var color: Color
+    var color: Color,
 ) {
-    //   @PrimaryKey(autoGenerate = true)
-    // val id: Int? = 0
-    fun toHabit(): Habit =
-        Habit(
-            id,
+    var isSynced: Boolean = false
+    var networkID: String = ""
+
+    fun toHabit(): Habit {
+        val converted = Habit(
             name,
             description,
             priority,
@@ -30,13 +30,19 @@ data class HabitDbEntity(
             executionNumber,
             periodNumber,
             periodType,
-            color
+            color,
         )
+        converted.networkID = networkID
+        converted.internalID = id
+        converted.isSynced = isSynced
+
+        return converted
+    }
 
     companion object {
         fun fromHabit(habit: Habit): HabitDbEntity =
             HabitDbEntity(
-               habit.id,
+                habit.internalID,
                 habit.name,
                 habit.description,
                 habit.priority,
@@ -44,7 +50,10 @@ data class HabitDbEntity(
                 habit.executionNumber,
                 habit.periodNumber,
                 habit.periodType,
-                habit.color
-            )
+                habit.color,
+            ).apply {
+                networkID=habit.networkID
+                isSynced=habit.isSynced
+            }
     }
 }

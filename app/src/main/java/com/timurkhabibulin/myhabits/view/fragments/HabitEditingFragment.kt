@@ -12,14 +12,20 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.gson.GsonBuilder
 import com.timurkhabibulin.myhabits.*
 import com.timurkhabibulin.myhabits.model.Habit
 import com.timurkhabibulin.myhabits.model.HabitType
-import com.timurkhabibulin.myhabits.model.db.AppDatabase
-import com.timurkhabibulin.myhabits.model.db.HabitsRepository
+import com.timurkhabibulin.myhabits.db.AppDatabase
+import com.timurkhabibulin.myhabits.db.HabitsRepository
+import com.timurkhabibulin.myhabits.network.*
 import com.timurkhabibulin.myhabits.viewmodel.HabitEditingViewModel
 import kotlinx.android.synthetic.main.fragment_habit_editing.*
 import kotlinx.android.synthetic.main.fragment_habit_editing.view.*
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.math.round
 
 enum class EditingFragmentMode {
@@ -33,7 +39,7 @@ const val HABIT_EDITING_FRAGMENT_NAME = "HabitEditingFragment"
 class HabitEditingFragment : Fragment() {
 
     private lateinit var fragmentMode: EditingFragmentMode
-    private var itemID = 0
+    private var itemID: Long = 0
     private lateinit var habitTypeToRB: Map<HabitType, RadioButton>
     private lateinit var habitPeriodTypeToNumber: Map<String, Int>
     private var chosenColor = Color.valueOf(Color.WHITE)
@@ -42,11 +48,11 @@ class HabitEditingFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(activityMode: String, itemPosition: Int) =
+        fun newInstance(activityMode: String, itemPosition: Long) =
             HabitEditingFragment().apply {
                 arguments = Bundle().apply {
                     putString(EDITING_FRAGMENT_MODE_PARAM, activityMode)
-                    putInt(ITEM_ID_PARAM, itemPosition)
+                    putLong(ITEM_ID_PARAM, itemPosition)
                 }
             }
     }
@@ -56,7 +62,7 @@ class HabitEditingFragment : Fragment() {
         arguments?.let {
             val actModeStr = it.getString(EDITING_FRAGMENT_MODE_PARAM) ?: ""
             fragmentMode = EditingFragmentMode.valueOf(actModeStr)
-            itemID = it.getInt(ITEM_ID_PARAM)
+            itemID = it.getLong(ITEM_ID_PARAM)
         }
 
         createViewModel()
@@ -73,7 +79,7 @@ class HabitEditingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (fragmentMode == EditingFragmentMode.EDIT)
-            viewModel.habit.observe(viewLifecycleOwner, ::fillInTheFields)
+            viewModel.openedHabit.observe(viewLifecycleOwner, ::fillInTheFields)
 
         bindResourcesToId()
 
@@ -93,17 +99,40 @@ class HabitEditingFragment : Fragment() {
 
     private fun createViewModel() {
         val db = AppDatabase.getDatabase(requireContext().applicationContext)
+        val networkApi = createNetworkApi()
+
         val repository = HabitsRepository(db.habitDao())
+        val habitService = HabitService(repository, networkApi)
 
         viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return HabitEditingViewModel(repository, fragmentMode, itemID) as T
+                return HabitEditingViewModel(habitService, fragmentMode, itemID) as T
             }
         })[HabitEditingViewModel::class.java]
     }
 
+    private fun createNetworkApi(): NetworkApi {
+        val gson = GsonBuilder()
+            .registerTypeAdapter(HabitNetworkEntity::class.java, HabitJsonDeserializer())
+            .registerTypeAdapter(String::class.java, HabitUIDJsonDeserializer())
+            .registerTypeAdapter(HabitNetworkEntity::class.java, HabitJsonSerializer())
+            .create()
+
+        val okHttpClient = OkHttpClient().newBuilder()
+            .addInterceptor(HttpLoggingInterceptor().apply { setLevel(HttpLoggingInterceptor.Level.BODY) })
+            .build()
+
+        val retrofit = Retrofit.Builder()
+            .client(okHttpClient)
+            .baseUrl("https://droid-test-server.doubletapp.ru/api/")
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+
+        return retrofit.create(NetworkApi::class.java)
+    }
+
     private fun saveFieldsState() {
-        val habit = viewModel.habit.value!!
+        val habit = viewModel.openedHabit.value!!
         val radioButton =
             view?.findViewById<RadioButton>(habit_type_radio_group.checkedRadioButtonId)
         habit.name = name_ET.text.toString()
@@ -210,7 +239,7 @@ class HabitEditingFragment : Fragment() {
             val habit = getNewHabit()
             if (habit != null) {
                 viewModel.saveHabit(habit)
-                openMenuFragment()
+                // openMenuFragment()
             }
         }
         close_button.setOnClickListener { openMenuFragment() }
@@ -240,7 +269,6 @@ class HabitEditingFragment : Fragment() {
         val radioButton =
             view?.findViewById<RadioButton>(habit_type_radio_group.checkedRadioButtonId)
         return Habit(
-            if (fragmentMode == EditingFragmentMode.EDIT) viewModel.habit.value!!.id else 0,
             name_ET.text.toString(),
             description_ET.text.toString(),
             priority_spinner.selectedItem.toString().toInt(),

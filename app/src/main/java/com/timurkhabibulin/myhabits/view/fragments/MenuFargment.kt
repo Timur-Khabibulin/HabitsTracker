@@ -8,12 +8,18 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.gson.GsonBuilder
 import com.timurkhabibulin.myhabits.R
-import com.timurkhabibulin.myhabits.model.db.AppDatabase
-import com.timurkhabibulin.myhabits.model.db.HabitsRepository
+import com.timurkhabibulin.myhabits.db.AppDatabase
+import com.timurkhabibulin.myhabits.db.HabitsRepository
+import com.timurkhabibulin.myhabits.network.*
 import com.timurkhabibulin.myhabits.viewmodel.HabitListViewModel
 import kotlinx.android.synthetic.main.fragment_menu.*
 import kotlinx.android.synthetic.main.toolbar.*
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 const val MENU_FRAGMENT_NAME = "MenuFargment"
 
@@ -48,13 +54,38 @@ class MenuFargment : Fragment() {
 
     private fun createListFragmentViewModel() {
         val db = AppDatabase.getDatabase(requireContext().applicationContext)
-        val repository = HabitsRepository(db.habitDao())
+        val networkApi = createNetworkApi()
 
-        ViewModelProvider(requireActivity(), object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return HabitListViewModel(repository) as T
-            }
-        })[HabitListViewModel::class.java]
+        val repository = HabitsRepository(db.habitDao())
+        val habitService = HabitService(repository, networkApi)
+
+        ViewModelProvider(
+            requireActivity(),
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return HabitListViewModel(habitService) as T
+                }
+            })[HabitListViewModel::class.java]
+    }
+
+    private fun createNetworkApi(): NetworkApi {
+        val gson = GsonBuilder()
+            .registerTypeAdapter(HabitNetworkEntity::class.java, HabitJsonDeserializer())
+            .registerTypeAdapter(String::class.java, HabitUIDJsonDeserializer())
+            .registerTypeAdapter(HabitNetworkEntity::class.java, HabitJsonSerializer())
+            .create()
+
+        val okHttpClient = OkHttpClient().newBuilder()
+            .addInterceptor(HttpLoggingInterceptor().apply { setLevel(HttpLoggingInterceptor.Level.BODY) })
+            .build()
+
+        val retrofit = Retrofit.Builder()
+            .client(okHttpClient)
+            .baseUrl("https://droid-test-server.doubletapp.ru/api/")
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+
+        return retrofit.create(NetworkApi::class.java)
     }
 
     private fun addHomeFragment(fragment: Fragment) {

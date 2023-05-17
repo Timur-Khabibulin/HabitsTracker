@@ -66,6 +66,7 @@ class HabitListFragment : Fragment() {
         habitAdapter = HabitsAdapter { itemID ->
             openHabitEditingFragment(itemID)
         }
+       // viewModel.goodHabits.
         viewModel.addObservers(fragmentMode, viewLifecycleOwner, ::onHabitsChanged)
 
         recycler_view.adapter = habitAdapter
@@ -76,7 +77,7 @@ class HabitListFragment : Fragment() {
         habitAdapter.submitList(habits)
     }
 
-    private fun openHabitEditingFragment(itemID: Int) {
+    private fun openHabitEditingFragment(itemID: Long) {
         val fragment = HabitEditingFragment.newInstance(EditingFragmentMode.EDIT.toString(), itemID)
         activity?.supportFragmentManager
             ?.beginTransaction()

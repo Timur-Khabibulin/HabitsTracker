@@ -1,4 +1,4 @@
-package com.timurkhabibulin.myhabits.model.db
+package com.timurkhabibulin.myhabits.db
 
 import android.graphics.Color
 import androidx.room.TypeConverter
