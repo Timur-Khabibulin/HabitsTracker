@@ -5,7 +5,7 @@
     android:id="@+id/homeFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.fragments.HomeFragment">
+    tools:context=".presentation.view.fragments.HomeFragment">
 
     <LinearLayout
         android:id="@+id/habitList"
@@ -34,7 +34,7 @@
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <fragment
-            android:name="com.timurkhabibulin.myhabits.view.fragments.HabitFilterFragment"
+            android:name="com.timurkhabibulin.myhabits.presentation.view.fragments.HabitFilterFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/habit_filter_fragment" />

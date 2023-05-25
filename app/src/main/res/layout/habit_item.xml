@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/habit_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -9,17 +10,35 @@
     android:elevation="5dp"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/habit_name_TV"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginVertical="20dp"
+        android:layout_height="match_parent"
         android:gravity="center_vertical"
-        android:hint="@string/no_title"
-        android:textColor="#191919"
-        android:textSize="26sp"
-        android:textStyle="bold" />
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="10dp">
+
+        <TextView
+            android:id="@+id/habit_name_TV"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:hint="@string/no_title"
+            android:textColor="#191919"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/done_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_weight="0"
+            app:icon="@drawable/done_icon"
+            app:iconSize="30dp"
+            android:contentDescription="@string/habit_done"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/habit_description_TV"
@@ -36,7 +55,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:baselineAligned="false">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -122,6 +142,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
+
     </LinearLayout>
 
 </LinearLayout>

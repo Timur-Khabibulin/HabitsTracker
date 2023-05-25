@@ -66,10 +66,14 @@
     </string-array>
 
     <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="note_image">note_image</string>
     <string name="repeat_image">repeat_image</string>
     <string name="event_repeat_image">event_repeat_image</string>
     <string name="color_palette">color_palette</string>
+    <string name="habit_done">Habit done</string>
+    <string name="sort_by_ascending">Sort by ascending</string>
+    <string name="sort_by_descending">Sort by descending</string>
 
 </resources>
