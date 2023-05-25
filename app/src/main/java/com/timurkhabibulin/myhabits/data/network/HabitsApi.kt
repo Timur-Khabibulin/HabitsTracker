@@ -4,14 +4,15 @@ import retrofit2.http.*
 
 interface HabitsApi {
 
+    //TODO: Перенести токен в создание клиента
     @Headers(
         "accept: application/json",
-        "Authorization: your_token"
+        "Authorization: 0ea7e3b4-3431-46f6-8ead-96f161c7b4c7"
     )
     @GET("habit")
     suspend fun getHabits(): List<HabitNetworkEntity>
 
     @PUT("habit")
-    @Headers("Authorization: your_token")
+    @Headers("Authorization: 0ea7e3b4-3431-46f6-8ead-96f161c7b4c7")
     suspend fun addHabit(@Body habit: HabitNetworkEntity): String
 }

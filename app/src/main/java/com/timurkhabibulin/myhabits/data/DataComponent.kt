@@ -12,7 +12,7 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [DatabaseModule::class, NetworkModule::class, ContextModule::class, DispatchersModule::class])
 interface DataComponent {
-
+    //Todo: Здесь мы ничего не знаем о presentation
     fun inject(menuFragment: MenuFragment)
 
     fun inject(habitEditingFragment: HabitEditingFragment)

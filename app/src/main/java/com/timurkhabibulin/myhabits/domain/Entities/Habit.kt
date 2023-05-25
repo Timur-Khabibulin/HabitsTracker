@@ -27,6 +27,7 @@ data class Habit(
         dateOfLastExecution = LocalDateTime.now()
     }
 
+    //TODO: Перенести в HabitUseCase
     fun execute() {
         totalDoneTimes++
         val currentDate = LocalDateTime.now()
@@ -39,7 +40,7 @@ data class Habit(
             "Неделя" -> currentDate.get(ChronoField.ALIGNED_WEEK_OF_YEAR) != dateOfLastExecution.get(
                 ChronoField.ALIGNED_WEEK_OF_YEAR
             ) ||
-                    currentDate.year != dateOfLastExecution.year //TODO: number of week
+                    currentDate.year != dateOfLastExecution.year
 
             "Месяц" -> currentDate.month != dateOfLastExecution.month || currentDate.year != dateOfLastExecution.year
 

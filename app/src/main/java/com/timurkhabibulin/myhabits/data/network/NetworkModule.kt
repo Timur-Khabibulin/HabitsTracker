@@ -41,6 +41,7 @@ class NetworkModule {
             .create()
     }
 
+    //Todo: Добавить токен в хедере здесь
     @Singleton
     @Provides
     fun provideOkHttpClient(): OkHttpClient {

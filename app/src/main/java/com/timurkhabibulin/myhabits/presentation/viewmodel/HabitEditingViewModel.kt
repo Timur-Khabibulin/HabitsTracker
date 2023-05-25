@@ -23,6 +23,8 @@ class HabitEditingViewModel(
     /*    TODO: HTTP FAILED: java.io.IOException: Canceled.
            Ошибка при отправке запроса на сервер, тк viewmodelScope завршает работу
            (сохранение происходит перед выходом из фрагмента)*/
+
+    //Todo: Сделать один scope для операций или инжектить его, либо использовать GlobalScope
     fun saveHabit(habit: Habit) =
         viewModelScope.launch(Dispatchers.IO) {
             when (mode) {
@@ -41,6 +43,6 @@ class HabitEditingViewModel(
 
     private fun loadHabit() =
         viewModelScope.launch(Dispatchers.IO) {
-                openedHabit = habitsUseCase.findById(id).asLiveData()
+            openedHabit = habitsUseCase.findById(id).asLiveData()
         }
 }

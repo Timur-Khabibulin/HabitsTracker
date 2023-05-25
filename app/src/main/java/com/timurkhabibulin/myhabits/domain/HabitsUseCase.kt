@@ -36,6 +36,7 @@ class HabitsUseCase @Inject constructor(
                 update(it)
                 val delta = it.executionNumberInPeriod - it.doneTimesInPeriod
 
+                //Todo: Возвзращать enum либо класс
                 mutableDoneHabitMessage.emit(
                     if (delta > 0) {
                         when (it.type) {

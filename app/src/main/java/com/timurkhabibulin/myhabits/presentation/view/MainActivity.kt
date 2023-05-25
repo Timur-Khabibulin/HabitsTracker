@@ -9,7 +9,7 @@ import com.timurkhabibulin.myhabits.presentation.view.fragments.MENU_FRAGMENT_NA
 import com.timurkhabibulin.myhabits.presentation.view.fragments.MenuFragment
 import kotlinx.android.synthetic.main.root_activity.*
 
-
+//Todo: Разделить на модули
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
