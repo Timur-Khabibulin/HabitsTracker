@@ -41,7 +41,7 @@ class HabitListViewModel(
         }
 
     fun habitWasDone(id: Long) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             habitsUseCase.habitWasDone(id)
         }
     }

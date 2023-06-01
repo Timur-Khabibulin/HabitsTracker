@@ -95,6 +95,7 @@ class HabitEditingFragment : Fragment() {
             saveFieldsState()
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun createViewModel() {
         (requireActivity().application as HabitsApp).dataComponent.inject(this)
 
@@ -119,7 +120,7 @@ class HabitEditingFragment : Fragment() {
         if (editTextNumber2.text.isNotEmpty())
             habit.executionNumberInPeriod = editTextNumber2.text.toString().toInt()
         habit.periodType = spinner6.selectedItem.toString()
-        habit.color = chosenColor
+        habit.color = chosenColor.toArgb()
 
         viewModel.saveState(habit)
     }
@@ -168,9 +169,9 @@ class HabitEditingFragment : Fragment() {
         editTextNumberDecimal.setText(habit.totalExecutionNumber.toString())
         editTextNumber2.setText(habit.executionNumberInPeriod.toString())
         spinner6.setSelection(habitPeriodTypeToNumber[habit.periodType]!!)
-        current_color.setBackgroundColor(habit.color.toArgb())
-        printColorValue(habit.color)
-        chosenColor = habit.color
+        current_color.setBackgroundColor(habit.color)
+        printColorValue(Color.valueOf(habit.color))
+        chosenColor =Color.valueOf(habit.color)
     }
 
     private fun makeColorSquares() {
@@ -251,7 +252,7 @@ class HabitEditingFragment : Fragment() {
             editTextNumberDecimal.text.toString().toInt(),
             editTextNumber2.text.toString().toInt(),
             spinner6.selectedItem.toString(),
-            chosenColor,
+            chosenColor.toArgb(),
             0
         )
     }

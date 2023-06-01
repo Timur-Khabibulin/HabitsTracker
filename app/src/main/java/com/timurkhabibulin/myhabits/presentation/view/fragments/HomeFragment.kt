@@ -18,10 +18,9 @@ class HomeFragment : Fragment() {
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
 
     companion object {
-
         @JvmStatic
         fun newInstance(): HomeFragment {
-           return HomeFragment()
+            return HomeFragment()
         }
     }
 
@@ -38,13 +37,13 @@ class HomeFragment : Fragment() {
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
 
-        make_new_habit.setOnClickListener {
+        make_new_habit_Btn.setOnClickListener {
             openHabitEditingFragment()
         }
 
         val names = listOf(getString(R.string.good_habits), getString(R.string.bad_habits))
 
-        this.let { fragment->
+        this.let { fragment ->
             viewPager.adapter = PagerAdapter(fragment)
             TabLayoutMediator(tabLayout, viewPager) { tab, position ->
                 tab.text = names[position]

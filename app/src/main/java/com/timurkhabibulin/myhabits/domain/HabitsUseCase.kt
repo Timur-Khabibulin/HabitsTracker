@@ -3,7 +3,6 @@ package com.timurkhabibulin.myhabits.domain
 import com.timurkhabibulin.myhabits.domain.Entities.Habit
 import com.timurkhabibulin.myhabits.domain.Entities.HabitType
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.withContext
@@ -16,6 +15,7 @@ class HabitsUseCase @Inject constructor(
 ) {
     private val mutableDoneHabitMessage = MutableSharedFlow<String>()
     val doneHabitMessage: Flow<String> = mutableDoneHabitMessage
+    private var messageWasSend = false
 
     private var isSynced = false
 
@@ -30,28 +30,30 @@ class HabitsUseCase @Inject constructor(
     }
 
     suspend fun habitWasDone(id: Long) {
+        messageWasSend = false
         withContext(dispatcher) {
             findById(id).collect {
-                it.execute()
-                update(it)
-                val delta = it.executionNumberInPeriod - it.doneTimesInPeriod
+                if (!messageWasSend) {
+                    it.execute()
+                    update(it)
+                    val delta = it.executionNumberInPeriod - it.doneTimesInPeriod
 
-                //Todo: Возвзращать enum либо класс
-                mutableDoneHabitMessage.emit(
-                    if (delta > 0) {
-                        when (it.type) {
-                            HabitType.GOOD -> "Стоит выполнить еще $delta раз"
-                            HabitType.BAD -> "Можете выполнить еще $delta раз"
+                    //Todo: Возвзращать enum либо класс
+                    mutableDoneHabitMessage.emit(
+                        if (delta > 0) {
+                            when (it.type) {
+                                HabitType.GOOD -> "Стоит выполнить еще $delta раз"
+                                HabitType.BAD -> "Можете выполнить еще $delta раз"
+                            }
+                        } else {
+                            when (it.type) {
+                                HabitType.GOOD -> "You are breathtaking!"
+                                HabitType.BAD -> "Хватит это делать"
+                            }
                         }
-                    } else {
-                        when (it.type) {
-                            HabitType.GOOD -> "You are breathtaking!"
-                            HabitType.BAD -> "Хватит это делать"
-                        }
-                    }
-                )
-
-                awaitCancellation()
+                    )
+                    messageWasSend = true
+                }
             }
         }
     }

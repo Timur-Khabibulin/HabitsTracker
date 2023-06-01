@@ -1,6 +1,5 @@
 package com.timurkhabibulin.myhabits.data.db
 
-import android.graphics.Color
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.timurkhabibulin.myhabits.domain.Entities.Habit
@@ -16,7 +15,7 @@ data class HabitDbEntity(
     var executionNumber: Int,
     var periodNumber: Int,
     var periodType: String,
-    var color: Color,
+    var color: Int,
 ) {
     var isSynced: Boolean = false
     var networkID: String = ""

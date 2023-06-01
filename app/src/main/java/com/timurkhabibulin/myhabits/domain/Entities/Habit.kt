@@ -1,6 +1,5 @@
 package com.timurkhabibulin.myhabits.domain.Entities
 
-import android.graphics.Color
 import java.time.LocalDateTime
 import java.time.temporal.ChronoField
 
@@ -12,7 +11,7 @@ data class Habit(
     var totalExecutionNumber: Int,
     var executionNumberInPeriod: Int,
     var periodType: String,
-    var color: Color,
+    var color: Int,
     var doneTimesInPeriod: Int
 ) {
     var internalID: Long = 0

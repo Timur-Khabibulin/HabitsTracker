@@ -4,7 +4,6 @@ import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-@TypeConverters(Converters::class)
 interface HabitDao {
 
     @Query("SELECT * FROM Habits")

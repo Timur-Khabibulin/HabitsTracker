@@ -40,7 +40,7 @@ class HabitsAdapter(
             if (habit.description.isNotEmpty()) habit_description_TV.text = habit.description
             habit_priority_TV.text = habit.priority.toString()
             habit_type_TV.text = habitTypeToString[habit.type]
-            habit_color_TV.setBackgroundColor(habit.color.toArgb())
+            habit_color_TV.setBackgroundColor(habit.color)
             habit_period_TV.text = period
         }
     }

@@ -1,6 +1,5 @@
 package com.timurkhabibulin.myhabits.data.network
 
-import android.graphics.Color
 import com.timurkhabibulin.myhabits.domain.Entities.Habit
 import com.timurkhabibulin.myhabits.domain.Entities.HabitType
 
@@ -25,7 +24,7 @@ data class HabitNetworkEntity(
             count,
             frequency,
             "Месяц",
-            Color.valueOf(color),
+            color,
             date
         ).apply {
             networkID = uid
@@ -43,7 +42,7 @@ data class HabitNetworkEntity(
                 habit.executionNumberInPeriod,
                 habit.priority,
                 habit.type.ordinal,
-                habit.color.toArgb()
+                habit.color//.toArgb()
             )
     }
 }
