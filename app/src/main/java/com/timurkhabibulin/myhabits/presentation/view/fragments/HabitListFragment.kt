@@ -12,8 +12,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.timurkhabibulin.myhabits.R
-import com.timurkhabibulin.myhabits.domain.Entities.Habit
 import com.timurkhabibulin.myhabits.domain.Entities.HabitType
+import com.timurkhabibulin.myhabits.presentation.entities.HabitPresentationEntity
 import com.timurkhabibulin.myhabits.presentation.view.HabitsAdapter
 import com.timurkhabibulin.myhabits.presentation.viewmodel.HabitListViewModel
 import kotlinx.android.synthetic.main.fragment_habit_list.*
@@ -91,7 +91,7 @@ class HabitListFragment : Fragment() {
         recycler_view.layoutManager = manager
     }
 
-    private fun onHabitsChanged(habits: List<Habit>?) {
+    private fun onHabitsChanged(habits: List<HabitPresentationEntity>?) {
         habitAdapter.submitList(habits)
     }
 

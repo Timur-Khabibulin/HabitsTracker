@@ -4,10 +4,10 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.timurkhabibulin.myhabits.domain.Entities.Habit
 import com.timurkhabibulin.myhabits.domain.Entities.HabitSortType
 import com.timurkhabibulin.myhabits.domain.Entities.HabitType
 import com.timurkhabibulin.myhabits.domain.HabitsUseCase
+import com.timurkhabibulin.myhabits.presentation.entities.HabitPresentationEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -16,11 +16,11 @@ class HabitListViewModel(
     private val habitsUseCase: HabitsUseCase
 ) : ViewModel() {
 
-    private var sourceGoodHabits = MediatorLiveData<List<Habit>>()
-    private var mutableBadHabits = MediatorLiveData<List<Habit>>()
+    private var sourceGoodHabits = MediatorLiveData<List<HabitPresentationEntity>>()
+    private var mutableBadHabits = MediatorLiveData<List<HabitPresentationEntity>>()
 
-    val goodHabits = MediatorLiveData<List<Habit>>()
-    val badHabits = MediatorLiveData<List<Habit>>()
+    val goodHabits = MediatorLiveData<List<HabitPresentationEntity>>()
+    val badHabits = MediatorLiveData<List<HabitPresentationEntity>>()
 
     val doneHabitMessage = habitsUseCase.doneHabitMessage
 
@@ -48,11 +48,17 @@ class HabitListViewModel(
 
     private fun loadHabits() =
         viewModelScope.launch(Dispatchers.IO) {
-            sourceGoodHabits.addSource(habitsUseCase.getAll().asLiveData()) {
-                sourceGoodHabits.postValue(it.filter { x -> x.type == HabitType.GOOD })
+            sourceGoodHabits.addSource(habitsUseCase.getAll().asLiveData()) { habits ->
+                sourceGoodHabits.postValue(habits
+                    .filter { x -> x.type == HabitType.GOOD }
+                    .map { return@map HabitPresentationEntity.fromHabit(it) }
+                )
             }
-            mutableBadHabits.addSource(habitsUseCase.getAll().asLiveData()) {
-                mutableBadHabits.postValue(it.filter { x -> x.type == HabitType.BAD })
+            mutableBadHabits.addSource(habitsUseCase.getAll().asLiveData()) { habits ->
+                mutableBadHabits.postValue(habits
+                    .filter { x -> x.type == HabitType.BAD }
+                    .map { return@map HabitPresentationEntity.fromHabit(it) }
+                )
             }
 
             goodHabits.addSource(sourceGoodHabits) {
@@ -64,7 +70,7 @@ class HabitListViewModel(
             habitsUseCase.synchronizeWithNetwork()
         }
 
-    private fun MediatorLiveData<List<Habit>>.sort(
+    private fun MediatorLiveData<List<HabitPresentationEntity>>.sort(
         sortType: HabitSortType,
         sortDirection: SortDirection
     ) {
@@ -88,9 +94,9 @@ class HabitListViewModel(
         }
     }
 
-    private fun MediatorLiveData<List<Habit>>.filterAndPut(
+    private fun MediatorLiveData<List<HabitPresentationEntity>>.filterAndPut(
         filter: String,
-        putInto: MediatorLiveData<List<Habit>>
+        putInto: MediatorLiveData<List<HabitPresentationEntity>>
     ) {
         this.value.let {
             putInto.postValue(

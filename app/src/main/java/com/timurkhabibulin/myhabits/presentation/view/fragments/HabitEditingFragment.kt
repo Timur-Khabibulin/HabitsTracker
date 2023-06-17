@@ -14,10 +14,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.timurkhabibulin.myhabits.*
 import com.timurkhabibulin.myhabits.data.network.*
-import com.timurkhabibulin.myhabits.domain.Entities.Habit
 import com.timurkhabibulin.myhabits.domain.Entities.HabitType
+import com.timurkhabibulin.myhabits.domain.Entities.PeriodType
 import com.timurkhabibulin.myhabits.domain.HabitsUseCase
 import com.timurkhabibulin.myhabits.presentation.HabitsApp
+import com.timurkhabibulin.myhabits.presentation.entities.HabitPresentationEntity
 import com.timurkhabibulin.myhabits.presentation.viewmodel.HabitEditingViewModel
 import kotlinx.android.synthetic.main.fragment_habit_editing.*
 import kotlinx.android.synthetic.main.fragment_habit_editing.view.*
@@ -39,7 +40,7 @@ class HabitEditingFragment : Fragment() {
     private lateinit var fragmentMode: EditingFragmentMode
     private var itemID: Long = 0
     private lateinit var habitTypeToRB: Map<HabitType, RadioButton>
-    private lateinit var habitPeriodTypeToNumber: Map<String, Int>
+
     private var chosenColor = Color.valueOf(Color.WHITE)
 
     private lateinit var viewModel: HabitEditingViewModel
@@ -119,8 +120,8 @@ class HabitEditingFragment : Fragment() {
             habit.totalExecutionNumber = editTextNumberDecimal.text.toString().toInt()
         if (editTextNumber2.text.isNotEmpty())
             habit.executionNumberInPeriod = editTextNumber2.text.toString().toInt()
-        habit.periodType = spinner6.selectedItem.toString()
-        habit.color = chosenColor.toArgb()
+        habit.periodType = PeriodType.values()[spinner6.selectedItemPosition]
+        habit.color = chosenColor
 
         viewModel.saveState(habit)
     }
@@ -152,26 +153,19 @@ class HabitEditingFragment : Fragment() {
             HabitType.GOOD to habit_type1_RB,
             HabitType.BAD to habit_type2_RB,
         )
-
-        habitPeriodTypeToNumber = mapOf(
-            resources.getString(R.string.day) to 0,
-            resources.getString(R.string.week) to 1,
-            resources.getString(R.string.month) to 2,
-            resources.getString(R.string.year) to 3
-        )
     }
 
-    private fun fillInTheFields(habit: Habit) {
+    private fun fillInTheFields(habit: HabitPresentationEntity) {
         name_ET.setText(habit.name)
         description_ET.setText(habit.description)
         habit_type_radio_group.check(habitTypeToRB[habit.type]!!.id)
         priority_spinner.setSelection(habit.priority - 1)
         editTextNumberDecimal.setText(habit.totalExecutionNumber.toString())
         editTextNumber2.setText(habit.executionNumberInPeriod.toString())
-        spinner6.setSelection(habitPeriodTypeToNumber[habit.periodType]!!)
-        current_color.setBackgroundColor(habit.color)
-        printColorValue(Color.valueOf(habit.color))
-        chosenColor =Color.valueOf(habit.color)
+        spinner6.setSelection(habit.periodType.ordinal)//habitPeriodTypeToNumber[habit.periodType]!!)
+        current_color.setBackgroundColor(habit.color.toArgb())
+        printColorValue(habit.color)
+        chosenColor = habit.color
     }
 
     private fun makeColorSquares() {
@@ -228,7 +222,7 @@ class HabitEditingFragment : Fragment() {
             ?.commit()
     }
 
-    private fun getNewHabit(): Habit? {
+    private fun getNewHabit(): HabitPresentationEntity? {
         if (habit_type_radio_group.checkedRadioButtonId == -1) {
             Toast.makeText(activity, R.string.type_not_selected, Toast.LENGTH_SHORT).show()
             return null
@@ -241,7 +235,20 @@ class HabitEditingFragment : Fragment() {
             Toast.makeText(activity, R.string.period_not_selected, Toast.LENGTH_SHORT).show()
             return null
         }
+        val radioButton =
+            habit_type_radio_group.findViewById<RadioButton>(habit_type_radio_group.checkedRadioButtonId)
 
+        return HabitPresentationEntity(
+            name_ET.text.toString(),
+            description_ET.text.toString(),
+            priority_spinner.selectedItem.toString().toInt(),
+            HabitType.values()[habit_type_radio_group.indexOfChild(radioButton)-1],// habitTypeToRB.filterValues { it == radioButton }.keys.first(),
+            editTextNumberDecimal.text.toString().toInt(),
+            editTextNumber2.text.toString().toInt(),
+            PeriodType.values()[spinner6.selectedItemPosition],//spinner6.selectedItem.toString().toInt(),
+            chosenColor,
+        )
+/*
         val radioButton =
             view?.findViewById<RadioButton>(habit_type_radio_group.checkedRadioButtonId)
         return Habit(
@@ -251,10 +258,10 @@ class HabitEditingFragment : Fragment() {
             habitTypeToRB.filterValues { it == radioButton }.keys.first(),
             editTextNumberDecimal.text.toString().toInt(),
             editTextNumber2.text.toString().toInt(),
-            spinner6.selectedItem.toString(),
+            PeriodType.values()[spinner6.selectedItemPosition],//spinner6.selectedItem.toString().toInt(),
             chosenColor.toArgb(),
             0
-        )
+        )*/
     }
 
 

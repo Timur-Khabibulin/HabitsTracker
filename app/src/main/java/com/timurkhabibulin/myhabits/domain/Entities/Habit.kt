@@ -10,9 +10,9 @@ data class Habit(
     var type: HabitType,
     var totalExecutionNumber: Int,
     var executionNumberInPeriod: Int,
-    var periodType: String,
+    var periodType: PeriodType,
     var color: Int,
-    var doneTimesInPeriod: Int
+    var doneTimesInPeriod: Int = 0
 ) {
     var internalID: Long = 0
     var networkID: String = ""
@@ -32,19 +32,18 @@ data class Habit(
         val currentDate = LocalDateTime.now()
 
         val isNewPeriod = when (periodType) {
-            "День" -> currentDate.dayOfMonth != dateOfLastExecution.dayOfMonth ||
+            PeriodType.DAY -> currentDate.dayOfMonth != dateOfLastExecution.dayOfMonth ||
                     currentDate.month != dateOfLastExecution.month ||
                     currentDate.year != dateOfLastExecution.year
 
-            "Неделя" -> currentDate.get(ChronoField.ALIGNED_WEEK_OF_YEAR) != dateOfLastExecution.get(
+            PeriodType.WEEK -> currentDate.get(ChronoField.ALIGNED_WEEK_OF_YEAR) != dateOfLastExecution.get(
                 ChronoField.ALIGNED_WEEK_OF_YEAR
             ) ||
                     currentDate.year != dateOfLastExecution.year
 
-            "Месяц" -> currentDate.month != dateOfLastExecution.month || currentDate.year != dateOfLastExecution.year
+            PeriodType.MONTH -> currentDate.month != dateOfLastExecution.month || currentDate.year != dateOfLastExecution.year
 
-            "Год" -> currentDate.year != dateOfLastExecution.year
-            else -> false
+            PeriodType.YEAR -> currentDate.year != dateOfLastExecution.year
         }
 
         if (!isNewPeriod) doneTimesInPeriod++

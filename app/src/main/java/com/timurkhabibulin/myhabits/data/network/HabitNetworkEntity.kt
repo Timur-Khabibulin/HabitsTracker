@@ -2,6 +2,7 @@ package com.timurkhabibulin.myhabits.data.network
 
 import com.timurkhabibulin.myhabits.domain.Entities.Habit
 import com.timurkhabibulin.myhabits.domain.Entities.HabitType
+import com.timurkhabibulin.myhabits.domain.Entities.PeriodType
 
 data class HabitNetworkEntity(
     val uid: String,
@@ -23,7 +24,7 @@ data class HabitNetworkEntity(
             HabitType.values()[type],
             count,
             frequency,
-            "Месяц",
+            PeriodType.MONTH,
             color,
             date
         ).apply {

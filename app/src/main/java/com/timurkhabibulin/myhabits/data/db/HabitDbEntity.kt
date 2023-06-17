@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.timurkhabibulin.myhabits.domain.Entities.Habit
 import com.timurkhabibulin.myhabits.domain.Entities.HabitType
+import com.timurkhabibulin.myhabits.domain.Entities.PeriodType
 
 @Entity(tableName = "Habits")
 data class HabitDbEntity(
@@ -14,7 +15,7 @@ data class HabitDbEntity(
     var type: String,
     var executionNumber: Int,
     var periodNumber: Int,
-    var periodType: String,
+    var periodType: PeriodType,
     var color: Int,
 ) {
     var isSynced: Boolean = false
