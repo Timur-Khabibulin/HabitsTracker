@@ -162,7 +162,7 @@ class HabitEditingFragment : Fragment() {
         priority_spinner.setSelection(habit.priority - 1)
         editTextNumberDecimal.setText(habit.totalExecutionNumber.toString())
         editTextNumber2.setText(habit.executionNumberInPeriod.toString())
-        spinner6.setSelection(habit.periodType.ordinal)//habitPeriodTypeToNumber[habit.periodType]!!)
+        spinner6.setSelection(habit.periodType.ordinal)
         current_color.setBackgroundColor(habit.color.toArgb())
         printColorValue(habit.color)
         chosenColor = habit.color
@@ -242,26 +242,12 @@ class HabitEditingFragment : Fragment() {
             name_ET.text.toString(),
             description_ET.text.toString(),
             priority_spinner.selectedItem.toString().toInt(),
-            HabitType.values()[habit_type_radio_group.indexOfChild(radioButton)-1],// habitTypeToRB.filterValues { it == radioButton }.keys.first(),
+            HabitType.values()[habit_type_radio_group.indexOfChild(radioButton)-1],
             editTextNumberDecimal.text.toString().toInt(),
             editTextNumber2.text.toString().toInt(),
-            PeriodType.values()[spinner6.selectedItemPosition],//spinner6.selectedItem.toString().toInt(),
+            PeriodType.values()[spinner6.selectedItemPosition],
             chosenColor,
         )
-/*
-        val radioButton =
-            view?.findViewById<RadioButton>(habit_type_radio_group.checkedRadioButtonId)
-        return Habit(
-            name_ET.text.toString(),
-            description_ET.text.toString(),
-            priority_spinner.selectedItem.toString().toInt(),
-            habitTypeToRB.filterValues { it == radioButton }.keys.first(),
-            editTextNumberDecimal.text.toString().toInt(),
-            editTextNumber2.text.toString().toInt(),
-            PeriodType.values()[spinner6.selectedItemPosition],//spinner6.selectedItem.toString().toInt(),
-            chosenColor.toArgb(),
-            0
-        )*/
     }
 
 

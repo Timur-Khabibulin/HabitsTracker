@@ -2,6 +2,7 @@ package com.timurkhabibulin.myhabits.domain
 
 import com.timurkhabibulin.myhabits.domain.Entities.Habit
 import com.timurkhabibulin.myhabits.domain.Entities.HabitType
+import com.timurkhabibulin.myhabits.domain.Entities.PeriodType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -41,7 +42,7 @@ internal class HabitsUseCaseTest {
             HabitType.BAD,
             3,
             2,
-            "Месяц",
+            PeriodType.MONTH,
             12323,
             0
         )
