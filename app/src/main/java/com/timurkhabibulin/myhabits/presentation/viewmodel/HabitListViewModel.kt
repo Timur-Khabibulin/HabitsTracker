@@ -9,6 +9,7 @@ import com.timurkhabibulin.myhabits.domain.Entities.HabitType
 import com.timurkhabibulin.myhabits.domain.HabitsUseCase
 import com.timurkhabibulin.myhabits.presentation.entities.HabitPresentationEntity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 
@@ -22,7 +23,19 @@ class HabitListViewModel(
     val goodHabits = MediatorLiveData<List<HabitPresentationEntity>>()
     val badHabits = MediatorLiveData<List<HabitPresentationEntity>>()
 
-    val doneHabitMessage = habitsUseCase.doneHabitMessage
+    val doneHabitMessage = habitsUseCase.doneHabit.map {
+        return@map if (it.leftToDo > 0) {
+            when (it.type) {
+                HabitType.GOOD -> "Стоит выполнить еще ${it.leftToDo} раз"
+                HabitType.BAD -> "Можете выполнить еще ${it.leftToDo} раз"
+            }
+        } else {
+            when (it.type) {
+                HabitType.GOOD -> "You are breathtaking!"
+                HabitType.BAD -> "Хватит это делать"
+            }
+        }
+    }
 
     init {
         loadHabits()
@@ -83,6 +96,7 @@ class HabitListViewModel(
                         HabitSortType.PERIOD_NUMBER -> habit.executionNumberInPeriod
                     }
                 }
+
                 SortDirection.DESCENDING -> it.sortedByDescending { habit ->
                     when (sortType) {
                         HabitSortType.PRIORITY -> habit.priority

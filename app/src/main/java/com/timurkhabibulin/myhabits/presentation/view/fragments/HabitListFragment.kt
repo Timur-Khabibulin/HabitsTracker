@@ -16,7 +16,7 @@ import com.timurkhabibulin.myhabits.domain.Entities.HabitType
 import com.timurkhabibulin.myhabits.presentation.entities.HabitPresentationEntity
 import com.timurkhabibulin.myhabits.presentation.view.HabitsAdapter
 import com.timurkhabibulin.myhabits.presentation.viewmodel.HabitListViewModel
-import kotlinx.android.synthetic.main.fragment_habit_list.*
+import kotlinx.android.synthetic.main.fragment_habit_list.recycler_view
 import kotlinx.coroutines.launch
 
 //const val HABIT_LIST_FRAGMENT = "HabitListFragment"
@@ -78,9 +78,8 @@ class HabitListFragment : Fragment() {
             HabitType.BAD -> viewModel.badHabits.observe(viewLifecycleOwner, ::onHabitsChanged)
         }
 
-
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.doneHabitMessage.collect {
                     Toast.makeText(activity, it, Toast.LENGTH_SHORT).show()
                 }

@@ -1,11 +1,16 @@
 package com.timurkhabibulin.myhabits.domain
 
 import com.timurkhabibulin.myhabits.domain.Entities.Habit
-import com.timurkhabibulin.myhabits.domain.Entities.HabitType
+import com.timurkhabibulin.myhabits.domain.Entities.HabitWasDone
+import com.timurkhabibulin.myhabits.domain.Entities.PeriodType
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
+import java.time.temporal.ChronoField
 import javax.inject.Inject
 
 class HabitsUseCase @Inject constructor(
@@ -13,9 +18,8 @@ class HabitsUseCase @Inject constructor(
     private val habitsWebService: HabitsWebService,
     private val dispatcher: CoroutineDispatcher
 ) {
-    private val mutableDoneHabitMessage = MutableSharedFlow<String>()
-    val doneHabitMessage: Flow<String> = mutableDoneHabitMessage
-    private var messageWasSend = false
+    private val mutableDoneHabit = MutableSharedFlow<HabitWasDone>()
+    val doneHabit: SharedFlow<HabitWasDone> = mutableDoneHabit
 
     private var isSynced = false
 
@@ -30,30 +34,17 @@ class HabitsUseCase @Inject constructor(
     }
 
     suspend fun habitWasDone(id: Long) {
-        messageWasSend = false
         withContext(dispatcher) {
             findById(id).collect {
-                if (!messageWasSend) {
-                    it.execute()
-                    update(it)
-                    val delta = it.executionNumberInPeriod - it.doneTimesInPeriod
-
-                    //Todo: Возвзращать enum либо класс
-                    mutableDoneHabitMessage.emit(
-                        if (delta > 0) {
-                            when (it.type) {
-                                HabitType.GOOD -> "Стоит выполнить еще $delta раз"
-                                HabitType.BAD -> "Можете выполнить еще $delta раз"
-                            }
-                        } else {
-                            when (it.type) {
-                                HabitType.GOOD -> "You are breathtaking!"
-                                HabitType.BAD -> "Хватит это делать"
-                            }
-                        }
+                it.execute()
+                update(it)
+                mutableDoneHabit.emit(
+                    HabitWasDone(
+                        it.type,
+                        it.executionNumberInPeriod - it.doneTimesInPeriod
                     )
-                    messageWasSend = true
-                }
+                )
+                cancel()
             }
         }
     }
@@ -103,6 +94,32 @@ class HabitsUseCase @Inject constructor(
                 isSynced = true
             })
         }
+    }
+
+    private fun Habit.execute() {
+        totalDoneTimes++
+        val currentDate = LocalDateTime.now()
+
+        val isNewPeriod = when (periodType) {
+            PeriodType.DAY -> currentDate.dayOfMonth != dateOfLastExecution.dayOfMonth ||
+                    currentDate.month != dateOfLastExecution.month ||
+                    currentDate.year != dateOfLastExecution.year
+
+            PeriodType.WEEK -> currentDate.get(ChronoField.ALIGNED_WEEK_OF_YEAR) != dateOfLastExecution.get(
+                ChronoField.ALIGNED_WEEK_OF_YEAR
+            ) || currentDate.year != dateOfLastExecution.year
+
+            PeriodType.MONTH -> currentDate.month != dateOfLastExecution.month || currentDate.year != dateOfLastExecution.year
+
+            PeriodType.YEAR -> currentDate.year != dateOfLastExecution.year
+        }
+
+        if (!isNewPeriod) doneTimesInPeriod++
+        else {
+            dateOfLastExecution = currentDate
+            doneTimesInPeriod = 1
+        }
+
     }
 
 }
