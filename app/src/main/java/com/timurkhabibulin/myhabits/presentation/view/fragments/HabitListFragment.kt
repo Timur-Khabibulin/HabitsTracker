@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.timurkhabibulin.myhabits.R
 import com.timurkhabibulin.myhabits.domain.Entities.HabitType
@@ -99,11 +100,8 @@ class HabitListFragment : Fragment() {
     }
 
     private fun openHabitEditingFragment(itemID: Long) {
-        val fragment = HabitEditingFragment.newInstance(EditingFragmentMode.EDIT.toString(), itemID)
-        activity?.supportFragmentManager
-            ?.beginTransaction()
-            ?.setReorderingAllowed(true)
-            ?.replace(R.id.rootFragment, fragment, HABIT_EDITING_FRAGMENT_NAME)
-            ?.commit()
+        val action = MenuFragmentDirections
+            .actionMenuFragment3ToHabitEditingFragment2(EditingFragmentMode.EDIT.toString(), itemID)
+        findNavController().navigate(action)
     }
 }

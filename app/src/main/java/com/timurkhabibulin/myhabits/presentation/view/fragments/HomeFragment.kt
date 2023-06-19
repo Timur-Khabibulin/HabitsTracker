@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayoutMediator
 import com.timurkhabibulin.myhabits.R
@@ -53,11 +54,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun openHabitEditingFragment() {
-        val fragment = HabitEditingFragment.newInstance(EditingFragmentMode.ADD.toString(), -1)
-        activity?.supportFragmentManager
-            ?.beginTransaction()
-            ?.replace(R.id.rootFragment, fragment, HABIT_EDITING_FRAGMENT_NAME)
-            ?.commit()
+        val action = MenuFragmentDirections
+            .actionMenuFragment3ToHabitEditingFragment2(EditingFragmentMode.ADD.toString(), -1)
+        findNavController().navigate(action)
     }
 
 }

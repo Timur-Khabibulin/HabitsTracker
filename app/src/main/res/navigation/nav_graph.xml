@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/menuFragment3">
     <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.timurkhabibulin.myhabits.presentation.view.fragments.HomeFragment"
-        android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
-    <fragment
-        android:id="@+id/aboutAppFragment"
-        android:name="com.timurkhabibulin.myhabits.presentation.view.fragments.AboutAppFragment"
-        android:label="fragment_about_app"
-        tools:layout="@layout/fragment_about_app" />
-    <fragment
-        android:id="@+id/menuFargment"
+        android:id="@+id/menuFragment3"
         android:name="com.timurkhabibulin.myhabits.presentation.view.fragments.MenuFragment"
-        android:label="MenuFargment" />
+        android:label="MenuFragment">
+        <action
+            android:id="@+id/action_menuFragment3_to_habitEditingFragment2"
+            app:destination="@id/habitEditingFragment2" >
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/habitEditingFragment2"
+        android:name="com.timurkhabibulin.myhabits.presentation.view.fragments.HabitEditingFragment"
+        android:label="HabitEditingFragment">
+        <argument
+            android:name="fragmentMode"
+            app:argType="string" />
+        <argument
+            android:name="itemPosition"
+            app:argType="long" />
+    </fragment>
 </navigation>

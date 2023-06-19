@@ -12,6 +12,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.timurkhabibulin.myhabits.*
 import com.timurkhabibulin.myhabits.data.network.*
 import com.timurkhabibulin.myhabits.domain.Entities.HabitType
@@ -29,10 +30,6 @@ enum class EditingFragmentMode {
     ADD, EDIT
 }
 
-const val ITEM_ID_PARAM = "itemID"
-const val EDITING_FRAGMENT_MODE_PARAM = "EditingFragmentMode"
-const val HABIT_EDITING_FRAGMENT_NAME = "HabitEditingFragment"
-
 class HabitEditingFragment : Fragment() {
     @Inject
     lateinit var habitsUseCase: HabitsUseCase
@@ -45,23 +42,12 @@ class HabitEditingFragment : Fragment() {
 
     private lateinit var viewModel: HabitEditingViewModel
 
-    companion object {
-        @JvmStatic
-        fun newInstance(activityMode: String, itemPosition: Long) =
-            HabitEditingFragment().apply {
-                arguments = Bundle().apply {
-                    putString(EDITING_FRAGMENT_MODE_PARAM, activityMode)
-                    putLong(ITEM_ID_PARAM, itemPosition)
-                }
-            }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            val actModeStr = it.getString(EDITING_FRAGMENT_MODE_PARAM) ?: ""
-            fragmentMode = EditingFragmentMode.valueOf(actModeStr)
-            itemID = it.getLong(ITEM_ID_PARAM)
+            val args = HabitEditingFragmentArgs.fromBundle(it)
+            fragmentMode = EditingFragmentMode.valueOf(args.fragmentMode)
+            itemID = args.itemPosition
         }
 
         createViewModel()
@@ -209,17 +195,10 @@ class HabitEditingFragment : Fragment() {
             val habit = getNewHabit()
             if (habit != null) {
                 viewModel.saveHabit(habit)
-                openMenuFragment()
+                findNavController().navigateUp()
             }
         }
-        close_button.setOnClickListener { openMenuFragment() }
-    }
-
-    private fun openMenuFragment() {
-        activity?.supportFragmentManager
-            ?.beginTransaction()
-            ?.replace(R.id.rootFragment, MenuFragment.newInstance())
-            ?.commit()
+        close_button.setOnClickListener { findNavController().navigateUp() }
     }
 
     private fun getNewHabit(): HabitPresentationEntity? {
@@ -242,7 +221,7 @@ class HabitEditingFragment : Fragment() {
             name_ET.text.toString(),
             description_ET.text.toString(),
             priority_spinner.selectedItem.toString().toInt(),
-            HabitType.values()[habit_type_radio_group.indexOfChild(radioButton)-1],
+            HabitType.values()[habit_type_radio_group.indexOfChild(radioButton) - 1],
             editTextNumberDecimal.text.toString().toInt(),
             editTextNumber2.text.toString().toInt(),
             PeriodType.values()[spinner6.selectedItemPosition],
