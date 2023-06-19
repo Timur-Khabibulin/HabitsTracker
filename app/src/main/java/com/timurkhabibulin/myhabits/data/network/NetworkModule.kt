@@ -2,12 +2,14 @@ package com.timurkhabibulin.myhabits.data.network
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.timurkhabibulin.myhabits.data.network.interceptors.AuthorizationInterceptor
+import com.timurkhabibulin.myhabits.data.network.json.HabitJsonDeserializer
+import com.timurkhabibulin.myhabits.data.network.json.HabitJsonSerializer
+import com.timurkhabibulin.myhabits.data.network.json.HabitUIDJsonDeserializer
 import com.timurkhabibulin.myhabits.domain.HabitsWebService
 import dagger.Module
 import dagger.Provides
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -51,16 +53,7 @@ class NetworkModule {
                 setLevel(HttpLoggingInterceptor.Level.BODY)
                 redactHeader("")
             })
-            .addInterceptor(Interceptor {
-                val original: Request = it.request()
-
-                val request: Request = original.newBuilder()
-                    .header("Authorization", "0ea7e3b4-3431-46f6-8ead-96f161c7b4c7")
-                    .method(original.method, original.body)
-                    .build()
-
-                return@Interceptor it.proceed(request)
-            })
+            .addInterceptor(AuthorizationInterceptor())
             .build()
     }
 

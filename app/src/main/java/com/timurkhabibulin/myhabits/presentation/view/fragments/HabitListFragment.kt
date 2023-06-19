@@ -65,6 +65,10 @@ class HabitListFragment : Fragment() {
         setUpHabitList()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+    }
+
     private fun setUpHabitList() {
         val manager = LinearLayoutManager(activity)
 

@@ -1,8 +1,9 @@
-package com.timurkhabibulin.myhabits.data.network
+package com.timurkhabibulin.myhabits.data.network.json
 
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
+import com.timurkhabibulin.myhabits.data.network.HabitNetworkEntity
 import java.lang.reflect.Type
 
 class HabitJsonDeserializer : JsonDeserializer<HabitNetworkEntity> {

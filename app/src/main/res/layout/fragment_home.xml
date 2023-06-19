@@ -33,7 +33,7 @@
         app:behavior_peekHeight="70dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-        <fragment
+        <androidx.fragment.app.FragmentContainerView
             android:name="com.timurkhabibulin.myhabits.presentation.view.fragments.HabitFilterFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

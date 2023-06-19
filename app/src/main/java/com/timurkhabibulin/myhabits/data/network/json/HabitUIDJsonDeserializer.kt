@@ -1,4 +1,4 @@
-package com.timurkhabibulin.myhabits.data.network
+package com.timurkhabibulin.myhabits.data.network.json
 
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer

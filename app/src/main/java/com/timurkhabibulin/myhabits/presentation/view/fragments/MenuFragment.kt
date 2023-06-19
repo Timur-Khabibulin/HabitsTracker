@@ -17,8 +17,6 @@ import kotlinx.android.synthetic.main.fragment_menu.*
 import kotlinx.android.synthetic.main.toolbar.*
 import javax.inject.Inject
 
-const val MENU_FRAGMENT_NAME = "MenuFargment"
-
 @Suppress("UNCHECKED_CAST")
 class MenuFragment : Fragment() {
     @Inject
@@ -46,7 +44,6 @@ class MenuFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        addHomeFragment(HomeFragment.newInstance())
         setUpDrawerToggle()
         setNavItemSelectedListener()
     }
@@ -61,13 +58,6 @@ class MenuFragment : Fragment() {
                     return HabitListViewModel(habitsUseCase) as T
                 }
             })[HabitListViewModel::class.java]
-    }
-
-    private fun addHomeFragment(fragment: Fragment) {
-        childFragmentManager
-            .beginTransaction()
-            .add(R.id.menuContent, fragment, HOME_FRAGMENT_NAME)
-            .commit()
     }
 
     private fun setUpDrawerToggle() {
