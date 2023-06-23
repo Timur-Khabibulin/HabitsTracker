@@ -12,19 +12,20 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.timurkhabibulin.myhabits.R
+import com.timurkhabibulin.myhabits.databinding.FragmentHabitListBinding
 import com.timurkhabibulin.myhabits.domain.Entities.HabitType
 import com.timurkhabibulin.myhabits.presentation.entities.HabitPresentationEntity
 import com.timurkhabibulin.myhabits.presentation.view.HabitsAdapter
 import com.timurkhabibulin.myhabits.presentation.viewmodel.HabitListViewModel
-import kotlinx.android.synthetic.main.fragment_habit_list.recycler_view
 import kotlinx.coroutines.launch
 
-//const val HABIT_LIST_FRAGMENT = "HabitListFragment"
 
 class HabitListFragment : Fragment() {
 
     private var fragmentMode = HabitType.GOOD
+    private var _binding: FragmentHabitListBinding? = null
+    private val binding
+        get() = _binding!!
 
     private lateinit var habitAdapter: HabitsAdapter
 
@@ -50,15 +51,16 @@ class HabitListFragment : Fragment() {
             val actModeStr = it.getString(HabitType::class.java.toString()) ?: ""
             fragmentMode = HabitType.valueOf(actModeStr)
         }
-
         viewModel = ViewModelProvider(requireActivity())[HabitListViewModel::class.java]
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_habit_list, container, false)
+    ): View {
+        _binding = FragmentHabitListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -68,6 +70,7 @@ class HabitListFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding = null
     }
 
     private fun setUpHabitList() {
@@ -91,8 +94,8 @@ class HabitListFragment : Fragment() {
             }
         }
 
-        recycler_view.adapter = habitAdapter
-        recycler_view.layoutManager = manager
+        binding.recyclerView.adapter = habitAdapter
+        binding.recyclerView.layoutManager = manager
     }
 
     private fun onHabitsChanged(habits: List<HabitPresentationEntity>?) {

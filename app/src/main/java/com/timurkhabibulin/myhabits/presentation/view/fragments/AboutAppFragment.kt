@@ -1,25 +1,36 @@
 package com.timurkhabibulin.myhabits.presentation.view.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.timurkhabibulin.myhabits.R
+import androidx.fragment.app.Fragment
+import com.timurkhabibulin.myhabits.databinding.FragmentAboutAppBinding
 
-const val ABOUT_APP_FRAGMENT_NAME="AboutAppFragment"
+const val ABOUT_APP_FRAGMENT_NAME = "AboutAppFragment"
+
 class AboutAppFragment : Fragment() {
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_about_app, container, false)
-    }
+    private var _binding: FragmentAboutAppBinding? = null
+    private val binding
+        get() = _binding!!
 
     companion object {
         @JvmStatic
         fun newInstance() = AboutAppFragment()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentAboutAppBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

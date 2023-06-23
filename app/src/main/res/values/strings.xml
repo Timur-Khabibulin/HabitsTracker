@@ -65,9 +65,6 @@
         <item>Количеству повторений</item>
     </string-array>
 
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="note_image">note_image</string>
     <string name="repeat_image">repeat_image</string>
     <string name="event_repeat_image">event_repeat_image</string>

@@ -15,14 +15,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.timurkhabibulin.myhabits.*
 import com.timurkhabibulin.myhabits.data.network.*
+import com.timurkhabibulin.myhabits.databinding.FragmentHabitEditingBinding
 import com.timurkhabibulin.myhabits.domain.Entities.HabitType
 import com.timurkhabibulin.myhabits.domain.Entities.PeriodType
 import com.timurkhabibulin.myhabits.domain.HabitsUseCase
 import com.timurkhabibulin.myhabits.presentation.HabitsApp
 import com.timurkhabibulin.myhabits.presentation.entities.HabitPresentationEntity
 import com.timurkhabibulin.myhabits.presentation.viewmodel.HabitEditingViewModel
-import kotlinx.android.synthetic.main.fragment_habit_editing.*
-import kotlinx.android.synthetic.main.fragment_habit_editing.view.*
 import javax.inject.Inject
 import kotlin.math.round
 
@@ -33,6 +32,10 @@ enum class EditingFragmentMode {
 class HabitEditingFragment : Fragment() {
     @Inject
     lateinit var habitsUseCase: HabitsUseCase
+
+    private var _binding: FragmentHabitEditingBinding? = null
+    private val binding
+        get() = _binding!!
 
     private lateinit var fragmentMode: EditingFragmentMode
     private var itemID: Long = 0
@@ -56,8 +59,9 @@ class HabitEditingFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_habit_editing, container, false)
+    ): View {
+        _binding = FragmentHabitEditingBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -82,9 +86,14 @@ class HabitEditingFragment : Fragment() {
             saveFieldsState()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     @Suppress("UNCHECKED_CAST")
     private fun createViewModel() {
-        (requireActivity().application as HabitsApp).dataComponent.inject(this)
+        (requireActivity().application as HabitsApp).appComponent.inject(this)
 
         viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -95,19 +104,22 @@ class HabitEditingFragment : Fragment() {
 
     private fun saveFieldsState() {
         val habit = viewModel.openedHabit.value!!
-        val radioButton =
-            view?.findViewById<RadioButton>(habit_type_radio_group.checkedRadioButtonId)
 
-        habit.name = name_ET.text.toString()
-        habit.description = description_ET.text.toString()
-        habit.priority = priority_spinner.selectedItem.toString().toInt()
-        habit.type = habitTypeToRB.filterValues { it == radioButton }.keys.first()
-        if (editTextNumberDecimal.text.isNotEmpty())
-            habit.totalExecutionNumber = editTextNumberDecimal.text.toString().toInt()
-        if (editTextNumber2.text.isNotEmpty())
-            habit.executionNumberInPeriod = editTextNumber2.text.toString().toInt()
-        habit.periodType = PeriodType.values()[spinner6.selectedItemPosition]
-        habit.color = chosenColor
+        with(binding) {
+            val radioButton =
+                view?.findViewById<RadioButton>(habitTypeRadioGroup.checkedRadioButtonId)
+
+            habit.name = nameET.text.toString()
+            habit.priority = prioritySpinner.selectedItem.toString().toInt()
+            habit.description = descriptionET.text.toString()
+            habit.type = habitTypeToRB.filterValues { it == radioButton }.keys.first()
+            if (editTextNumberDecimal.text.isNotEmpty())
+                habit.totalExecutionNumber = editTextNumberDecimal.text.toString().toInt()
+            if (editTextNumber2.text.isNotEmpty())
+                habit.executionNumberInPeriod = editTextNumber2.text.toString().toInt()
+            habit.periodType = PeriodType.values()[spinner6.selectedItemPosition]
+            habit.color = chosenColor
+        }
 
         viewModel.saveState(habit)
     }
@@ -119,7 +131,7 @@ class HabitEditingFragment : Fragment() {
             resources.getStringArray(R.array.habit_priorities)
         ).also { arrayAdapter ->
             arrayAdapter.setDropDownViewResource(R.layout.spinner_item)
-            priority_spinner.adapter = arrayAdapter
+            binding.prioritySpinner.adapter = arrayAdapter
         }
     }
 
@@ -130,28 +142,31 @@ class HabitEditingFragment : Fragment() {
             resources.getStringArray(R.array.period)
         ).also { arrayAdapter ->
             arrayAdapter.setDropDownViewResource(R.layout.spinner_item)
-            spinner6.adapter = arrayAdapter
+            binding.spinner6.adapter = arrayAdapter
         }
     }
 
     private fun bindResourcesToId() {
         habitTypeToRB = mapOf(
-            HabitType.GOOD to habit_type1_RB,
-            HabitType.BAD to habit_type2_RB,
+            HabitType.GOOD to binding.habitType1RB,
+            HabitType.BAD to binding.habitType2RB,
         )
     }
 
     private fun fillInTheFields(habit: HabitPresentationEntity) {
-        name_ET.setText(habit.name)
-        description_ET.setText(habit.description)
-        habit_type_radio_group.check(habitTypeToRB[habit.type]!!.id)
-        priority_spinner.setSelection(habit.priority - 1)
-        editTextNumberDecimal.setText(habit.totalExecutionNumber.toString())
-        editTextNumber2.setText(habit.executionNumberInPeriod.toString())
-        spinner6.setSelection(habit.periodType.ordinal)
-        current_color.setBackgroundColor(habit.color.toArgb())
-        printColorValue(habit.color)
-        chosenColor = habit.color
+        with(binding) {
+            nameET.setText(habit.name)
+            descriptionET.setText(habit.description)
+            habitTypeRadioGroup.check(habitTypeToRB[habit.type]!!.id)
+            prioritySpinner.setSelection(habit.priority - 1)
+            editTextNumberDecimal.setText(habit.totalExecutionNumber.toString())
+            editTextNumber2.setText(habit.executionNumberInPeriod.toString())
+            spinner6.setSelection(habit.periodType.ordinal)
+            currentColor.setBackgroundColor(habit.color.toArgb())
+            printColorValue(habit.color)
+            chosenColor = habit.color
+        }
+
     }
 
     private fun makeColorSquares() {
@@ -163,13 +178,13 @@ class HabitEditingFragment : Fragment() {
         }
 
         val hue = GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, hueColors.toIntArray())
-        colors_layout.background = hue
+        binding.colorsLayout.background = hue
 
         val squareWidth = 200
         val squareMargin = round(0.25 * 250).toInt()
         val gradientWidth = (squareWidth + squareMargin) * 16
         val gradientHeight = squareWidth + 2 * squareMargin
-        val bitmap = colors_layout.background.toBitmap(gradientWidth, gradientHeight)
+        val bitmap = binding.colorsLayout.background.toBitmap(gradientWidth, gradientHeight)
         var squareCenterX = squareWidth / 2
         val squareCenterY = squareWidth / 2
 
@@ -178,12 +193,12 @@ class HabitEditingFragment : Fragment() {
             val params = LinearLayout.LayoutParams(squareWidth, squareWidth)
             params.setMargins(0, squareMargin, squareMargin, squareMargin)
             square.layoutParams = params
-            colors_scroll.colors_layout.addView(square)
+            binding.colorsLayout.addView(square)
             val color = bitmap.getColor(squareCenterX, squareCenterY)
             square.setBackgroundColor(color.toArgb())
             square.setOnClickListener {
                 chosenColor = color
-                current_color.setBackgroundColor(chosenColor.toArgb())
+                binding.currentColor.setBackgroundColor(chosenColor.toArgb())
                 printColorValue(color)
             }
             squareCenterX += squareMargin + squareWidth
@@ -191,42 +206,45 @@ class HabitEditingFragment : Fragment() {
     }
 
     private fun onCloseFragment() {
-        save_btn.setOnClickListener {
+        binding.saveBtn.setOnClickListener {
             val habit = getNewHabit()
             if (habit != null) {
                 viewModel.saveHabit(habit)
                 findNavController().navigateUp()
             }
         }
-        close_button.setOnClickListener { findNavController().navigateUp() }
+        binding.closeButton.setOnClickListener { findNavController().navigateUp() }
     }
 
     private fun getNewHabit(): HabitPresentationEntity? {
-        if (habit_type_radio_group.checkedRadioButtonId == -1) {
-            Toast.makeText(activity, R.string.type_not_selected, Toast.LENGTH_SHORT).show()
-            return null
-        }
-        if (editTextNumberDecimal.text.isEmpty()) {
-            Toast.makeText(activity, R.string.repet_num_not_specified, Toast.LENGTH_SHORT).show()
-            return null
-        }
-        if (editTextNumber2.text.isEmpty()) {
-            Toast.makeText(activity, R.string.period_not_selected, Toast.LENGTH_SHORT).show()
-            return null
-        }
-        val radioButton =
-            habit_type_radio_group.findViewById<RadioButton>(habit_type_radio_group.checkedRadioButtonId)
+        with(binding) {
+            if (habitTypeRadioGroup.checkedRadioButtonId == -1) {
+                Toast.makeText(activity, R.string.type_not_selected, Toast.LENGTH_SHORT).show()
+                return null
+            }
+            if (editTextNumberDecimal.text.isEmpty()) {
+                Toast.makeText(activity, R.string.repet_num_not_specified, Toast.LENGTH_SHORT)
+                    .show()
+                return null
+            }
+            if (editTextNumber2.text.isEmpty()) {
+                Toast.makeText(activity, R.string.period_not_selected, Toast.LENGTH_SHORT).show()
+                return null
+            }
+            val radioButton =
+                habitTypeRadioGroup.findViewById<RadioButton>(habitTypeRadioGroup.checkedRadioButtonId)
 
-        return HabitPresentationEntity(
-            name_ET.text.toString(),
-            description_ET.text.toString(),
-            priority_spinner.selectedItem.toString().toInt(),
-            HabitType.values()[habit_type_radio_group.indexOfChild(radioButton) - 1],
-            editTextNumberDecimal.text.toString().toInt(),
-            editTextNumber2.text.toString().toInt(),
-            PeriodType.values()[spinner6.selectedItemPosition],
-            chosenColor,
-        )
+            return HabitPresentationEntity(
+                nameET.text.toString(),
+                descriptionET.text.toString(),
+                prioritySpinner.selectedItem.toString().toInt(),
+                HabitType.values()[habitTypeRadioGroup.indexOfChild(radioButton) - 1],
+                editTextNumberDecimal.text.toString().toInt(),
+                editTextNumber2.text.toString().toInt(),
+                PeriodType.values()[spinner6.selectedItemPosition],
+                chosenColor,
+            )
+        }
     }
 
 
@@ -243,7 +261,7 @@ class HabitEditingFragment : Fragment() {
         val s = String.format("%.1f", hsvValues[1])
         val v = String.format("%.1f", hsvValues[2])
 
-        rgb_color.text = "R: $r    G: $g    B: $b"
-        hsv_color.text = "H: $h    S: $s      V: $v  "
+        binding.rgbColor.text = "R: $r    G: $g    B: $b"
+        binding.hsvColor.text = "H: $h    S: $s      V: $v  "
     }
 }

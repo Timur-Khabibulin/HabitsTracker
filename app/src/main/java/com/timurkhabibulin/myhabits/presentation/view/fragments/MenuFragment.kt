@@ -11,10 +11,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.timurkhabibulin.myhabits.R
 import com.timurkhabibulin.myhabits.presentation.HabitsApp
 import com.timurkhabibulin.myhabits.data.network.*
+import com.timurkhabibulin.myhabits.databinding.FragmentMenuBinding
+import com.timurkhabibulin.myhabits.databinding.ToolbarBinding
 import com.timurkhabibulin.myhabits.domain.HabitsUseCase
 import com.timurkhabibulin.myhabits.presentation.viewmodel.HabitListViewModel
-import kotlinx.android.synthetic.main.fragment_menu.*
-import kotlinx.android.synthetic.main.toolbar.*
 import javax.inject.Inject
 
 @Suppress("UNCHECKED_CAST")
@@ -22,12 +22,13 @@ class MenuFragment : Fragment() {
     @Inject
     lateinit var habitsUseCase: HabitsUseCase
 
+    private var _binding: FragmentMenuBinding? = null
+    private val binding
+        get() = _binding!!
+
+    private var toolbarBinding: ToolbarBinding? = null
     private lateinit var drawerToggle: ActionBarDrawerToggle
 
-    companion object {
-        @JvmStatic
-        fun newInstance() = MenuFragment()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,10 +36,13 @@ class MenuFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_menu, container, false)
+    ): View {
+        _binding = FragmentMenuBinding.inflate(inflater, container, false)
+        toolbarBinding = ToolbarBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,8 +52,13 @@ class MenuFragment : Fragment() {
         setNavItemSelectedListener()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun createListFragmentViewModel() {
-        (requireActivity().application as HabitsApp).dataComponent.inject(this)
+        (requireActivity().application as HabitsApp).appComponent.inject(this)
 
         ViewModelProvider(
             requireActivity(),
@@ -63,25 +72,26 @@ class MenuFragment : Fragment() {
     private fun setUpDrawerToggle() {
         drawerToggle = ActionBarDrawerToggle(
             activity,
-            menuLayout,
-            toolbar,
+            binding.menuLayout,
+            binding.appBar.toolbar,
             R.string.open_drawer,
             R.string.close_drawer
         )
 
-        menuLayout.addDrawerListener(drawerToggle)
+        binding.menuLayout.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
     }
 
 
     private fun setNavItemSelectedListener() {
-        navView.setNavigationItemSelectedListener {
+        binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.homeFragment ->
                     replaceChildFragment(
                         HomeFragment.newInstance(),
                         HOME_FRAGMENT_NAME
                     )
+
                 R.id.aboutAppFragment -> replaceChildFragment(
                     AboutAppFragment.newInstance(),
                     ABOUT_APP_FRAGMENT_NAME

@@ -8,7 +8,6 @@
     tools:context=".presentation.view.fragments.HomeFragment">
 
     <LinearLayout
-        android:id="@+id/habitList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">

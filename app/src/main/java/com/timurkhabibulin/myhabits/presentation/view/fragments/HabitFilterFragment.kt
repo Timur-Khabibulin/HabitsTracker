@@ -1,19 +1,19 @@
 package com.timurkhabibulin.myhabits.presentation.view.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.timurkhabibulin.myhabits.R
+import com.timurkhabibulin.myhabits.databinding.FragmentHabitFilterBinding
 import com.timurkhabibulin.myhabits.domain.Entities.HabitSortType
 import com.timurkhabibulin.myhabits.presentation.viewmodel.HabitListViewModel
 import com.timurkhabibulin.myhabits.presentation.viewmodel.SortDirection
-import kotlinx.android.synthetic.main.fragment_habit_filter.*
 
 
 class HabitFilterFragment : Fragment() {
@@ -21,11 +21,18 @@ class HabitFilterFragment : Fragment() {
     private var sortDirection = SortDirection.ASCENDING
     private var sortType = HabitSortType.PRIORITY
 
+    private var _binding: FragmentHabitFilterBinding? = null
+    private val binding
+        get() = _binding!!
+
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_habit_filter, container, false)
+        _binding = FragmentHabitFilterBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -35,15 +42,20 @@ class HabitFilterFragment : Fragment() {
         setUpSpinner()
         setUpSearchText()
 
-        sort_ascend_IV.setOnClickListener {
+        binding.sortAscendIV.setOnClickListener {
             sortDirection = SortDirection.ASCENDING
             viewModel.sortHabits(sortType, sortDirection)
         }
 
-        sort_desc_IV.setOnClickListener {
+        binding.sortDescIV.setOnClickListener {
             sortDirection = SortDirection.DESCENDING
             viewModel.sortHabits(sortType, sortDirection)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun setUpSpinner() {
@@ -53,26 +65,27 @@ class HabitFilterFragment : Fragment() {
             resources.getStringArray(R.array.sort_types)
         ).also { arrayAdapter ->
             arrayAdapter.setDropDownViewResource(R.layout.spinner_item)
-            sort_type_spinner.adapter = arrayAdapter
+            binding.sortTypeSpinner.adapter = arrayAdapter
         }
-        sort_type_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                sortType = HabitSortType.values()[position]
-                viewModel.sortHabits(sortType, sortDirection)
-            }
+        binding.sortTypeSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    sortType = HabitSortType.values()[position]
+                    viewModel.sortHabits(sortType, sortDirection)
+                }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
             }
-        }
     }
 
     private fun setUpSearchText() {
-        search_text.addTextChangedListener {
+        binding.searchText.addTextChangedListener {
             viewModel.filterHabitsByName(it.toString())
         }
     }
