@@ -72,7 +72,14 @@ class HabitEditingFragment : Fragment() {
 
         bindResourcesToId()
 
-        onCloseFragment()
+        with(binding) {
+            closeButton.setOnClickListener {
+                findNavController().navigateUp()
+            }
+            saveBtn.setOnClickListener {
+                getNewHabit()?.let { habit -> viewModel.saveHabit(habit) }
+            }
+        }
 
         setUpPrioritySpinner()
         setUpPeriodSpinner()
@@ -203,17 +210,6 @@ class HabitEditingFragment : Fragment() {
             }
             squareCenterX += squareMargin + squareWidth
         }
-    }
-
-    private fun onCloseFragment() {
-        binding.saveBtn.setOnClickListener {
-            val habit = getNewHabit()
-            if (habit != null) {
-                viewModel.saveHabit(habit)
-                findNavController().navigateUp()
-            }
-        }
-        binding.closeButton.setOnClickListener { findNavController().navigateUp() }
     }
 
     private fun getNewHabit(): HabitPresentationEntity? {
