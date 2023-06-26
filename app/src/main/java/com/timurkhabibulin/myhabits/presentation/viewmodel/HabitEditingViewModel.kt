@@ -27,11 +27,6 @@ class HabitEditingViewModel(
         if (mode == EditingFragmentMode.EDIT) loadHabit()
     }
 
-    /*    TODO: HTTP FAILED: java.io.IOException: Canceled.
-           Ошибка при отправке запроса на сервер, тк viewmodelScope завршает работу
-           (сохранение происходит перед выходом из фрагмента)*/
-
-    //Todo: Сделать один scope для операций и инжектить его, либо использовать GlobalScope
     fun saveHabit(habit: HabitPresentationEntity) =
         viewModelScope.launch(Dispatchers.IO) {
             when (mode) {
