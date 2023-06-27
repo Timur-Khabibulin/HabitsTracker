@@ -1,10 +1,13 @@
 package com.timurkhabibulin.myhabits.presentation.viewmodel
 
-import androidx.lifecycle.*
-import com.timurkhabibulin.myhabits.domain.Entities.Habit
-import com.timurkhabibulin.myhabits.domain.HabitsUseCase
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.timurkhabibulin.domain.HabitsUseCase
 import com.timurkhabibulin.myhabits.presentation.entities.HabitPresentationEntity
 import com.timurkhabibulin.myhabits.presentation.view.fragments.EditingFragmentMode
+import com.timurkhabibulin.domain.Entities.Habit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

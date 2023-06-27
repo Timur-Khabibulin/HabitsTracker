@@ -14,11 +14,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.timurkhabibulin.myhabits.*
-import com.timurkhabibulin.myhabits.data.network.*
 import com.timurkhabibulin.myhabits.databinding.FragmentHabitEditingBinding
-import com.timurkhabibulin.myhabits.domain.Entities.HabitType
-import com.timurkhabibulin.myhabits.domain.Entities.PeriodType
-import com.timurkhabibulin.myhabits.domain.HabitsUseCase
 import com.timurkhabibulin.myhabits.presentation.HabitsApp
 import com.timurkhabibulin.myhabits.presentation.entities.HabitPresentationEntity
 import com.timurkhabibulin.myhabits.presentation.viewmodel.HabitEditingViewModel
@@ -31,7 +27,7 @@ enum class EditingFragmentMode {
 
 class HabitEditingFragment : Fragment() {
     @Inject
-    lateinit var habitsUseCase: HabitsUseCase
+    lateinit var habitsUseCase: com.timurkhabibulin.domain.HabitsUseCase
 
     private var _binding: FragmentHabitEditingBinding? = null
     private val binding
@@ -39,7 +35,7 @@ class HabitEditingFragment : Fragment() {
 
     private lateinit var fragmentMode: EditingFragmentMode
     private var itemID: Long = 0
-    private lateinit var habitTypeToRB: Map<HabitType, RadioButton>
+    private lateinit var habitTypeToRB: Map<com.timurkhabibulin.domain.Entities.HabitType, RadioButton>
 
     private var chosenColor = Color.valueOf(Color.WHITE)
 
@@ -124,7 +120,7 @@ class HabitEditingFragment : Fragment() {
                 habit.totalExecutionNumber = editTextNumberDecimal.text.toString().toInt()
             if (editTextNumber2.text.isNotEmpty())
                 habit.executionNumberInPeriod = editTextNumber2.text.toString().toInt()
-            habit.periodType = PeriodType.values()[spinner6.selectedItemPosition]
+            habit.periodType = com.timurkhabibulin.domain.Entities.PeriodType.values()[spinner6.selectedItemPosition]
             habit.color = chosenColor
         }
 
@@ -155,8 +151,8 @@ class HabitEditingFragment : Fragment() {
 
     private fun bindResourcesToId() {
         habitTypeToRB = mapOf(
-            HabitType.GOOD to binding.habitType1RB,
-            HabitType.BAD to binding.habitType2RB,
+            com.timurkhabibulin.domain.Entities.HabitType.GOOD to binding.habitType1RB,
+            com.timurkhabibulin.domain.Entities.HabitType.BAD to binding.habitType2RB,
         )
     }
 
@@ -234,10 +230,10 @@ class HabitEditingFragment : Fragment() {
                 nameET.text.toString(),
                 descriptionET.text.toString(),
                 prioritySpinner.selectedItem.toString().toInt(),
-                HabitType.values()[habitTypeRadioGroup.indexOfChild(radioButton) - 1],
+                com.timurkhabibulin.domain.Entities.HabitType.values()[habitTypeRadioGroup.indexOfChild(radioButton) - 1],
                 editTextNumberDecimal.text.toString().toInt(),
                 editTextNumber2.text.toString().toInt(),
-                PeriodType.values()[spinner6.selectedItemPosition],
+                com.timurkhabibulin.domain.Entities.PeriodType.values()[spinner6.selectedItemPosition],
                 chosenColor,
             )
         }

@@ -4,9 +4,9 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.timurkhabibulin.myhabits.domain.Entities.HabitSortType
-import com.timurkhabibulin.myhabits.domain.Entities.HabitType
-import com.timurkhabibulin.myhabits.domain.HabitsUseCase
+import com.timurkhabibulin.domain.Entities.HabitSortType
+import com.timurkhabibulin.domain.Entities.HabitType
+import com.timurkhabibulin.domain.HabitsUseCase
 import com.timurkhabibulin.myhabits.presentation.entities.HabitPresentationEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map

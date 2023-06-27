@@ -13,7 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.timurkhabibulin.myhabits.databinding.FragmentHabitListBinding
-import com.timurkhabibulin.myhabits.domain.Entities.HabitType
+import com.timurkhabibulin.domain.Entities.HabitType
 import com.timurkhabibulin.myhabits.presentation.entities.HabitPresentationEntity
 import com.timurkhabibulin.myhabits.presentation.view.HabitsAdapter
 import com.timurkhabibulin.myhabits.presentation.viewmodel.HabitListViewModel

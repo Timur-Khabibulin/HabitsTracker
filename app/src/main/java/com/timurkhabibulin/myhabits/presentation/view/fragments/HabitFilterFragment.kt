@@ -9,9 +9,9 @@ import android.widget.ArrayAdapter
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.timurkhabibulin.domain.Entities.HabitSortType
 import com.timurkhabibulin.myhabits.R
 import com.timurkhabibulin.myhabits.databinding.FragmentHabitFilterBinding
-import com.timurkhabibulin.myhabits.domain.Entities.HabitSortType
 import com.timurkhabibulin.myhabits.presentation.viewmodel.HabitListViewModel
 import com.timurkhabibulin.myhabits.presentation.viewmodel.SortDirection
 

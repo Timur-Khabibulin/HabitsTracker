@@ -2,11 +2,13 @@ package com.timurkhabibulin.myhabits.presentation
 
 import dagger.Module
 import dagger.Provides
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 @Module
-class DispatchersModule(private val dispatcher: CoroutineDispatcher) {
-
+class DispatchersModule {
     @Provides
-    fun provideDispatcher() = dispatcher
+    fun provideDispatcher() = Dispatchers.IO
 }
+
+
+

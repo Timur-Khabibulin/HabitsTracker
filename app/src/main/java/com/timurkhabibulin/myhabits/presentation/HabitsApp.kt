@@ -1,7 +1,6 @@
 package com.timurkhabibulin.myhabits.presentation
 
 import android.app.Application
-import kotlinx.coroutines.Dispatchers
 
 class HabitsApp : Application() {
     lateinit var appComponent: AppComponent
@@ -10,7 +9,7 @@ class HabitsApp : Application() {
         super.onCreate()
 
         appComponent = DaggerAppComponent.builder()
-            .dispatchersModule(DispatchersModule(Dispatchers.IO))
+            .dispatchersModule(DispatchersModule())
             .contextModule(ContextModule(this))
             .build()
 

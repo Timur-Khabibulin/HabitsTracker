@@ -9,18 +9,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.timurkhabibulin.myhabits.R
-import com.timurkhabibulin.myhabits.presentation.HabitsApp
-import com.timurkhabibulin.myhabits.data.network.*
 import com.timurkhabibulin.myhabits.databinding.FragmentMenuBinding
 import com.timurkhabibulin.myhabits.databinding.ToolbarBinding
-import com.timurkhabibulin.myhabits.domain.HabitsUseCase
+import com.timurkhabibulin.myhabits.presentation.HabitsApp
 import com.timurkhabibulin.myhabits.presentation.viewmodel.HabitListViewModel
 import javax.inject.Inject
 
 @Suppress("UNCHECKED_CAST")
 class MenuFragment : Fragment() {
     @Inject
-    lateinit var habitsUseCase: HabitsUseCase
+    lateinit var habitsUseCase: com.timurkhabibulin.domain.HabitsUseCase
 
     private var _binding: FragmentMenuBinding? = null
     private val binding

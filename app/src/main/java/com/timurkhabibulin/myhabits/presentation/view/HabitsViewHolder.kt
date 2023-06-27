@@ -1,10 +1,10 @@
 package com.timurkhabibulin.myhabits.presentation.view
 
 import androidx.recyclerview.widget.RecyclerView
+import com.timurkhabibulin.domain.Entities.HabitType
+import com.timurkhabibulin.domain.Entities.PeriodType
 import com.timurkhabibulin.myhabits.R
 import com.timurkhabibulin.myhabits.databinding.HabitItemBinding
-import com.timurkhabibulin.myhabits.domain.Entities.HabitType
-import com.timurkhabibulin.myhabits.domain.Entities.PeriodType
 import com.timurkhabibulin.myhabits.presentation.entities.HabitPresentationEntity
 
 class HabitsViewHolder(

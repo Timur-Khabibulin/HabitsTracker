@@ -1,9 +1,9 @@
 package com.timurkhabibulin.myhabits.presentation.entities
 
 import android.graphics.Color
-import com.timurkhabibulin.myhabits.domain.Entities.Habit
-import com.timurkhabibulin.myhabits.domain.Entities.HabitType
-import com.timurkhabibulin.myhabits.domain.Entities.PeriodType
+import com.timurkhabibulin.domain.Entities.Habit
+import com.timurkhabibulin.domain.Entities.HabitType
+import com.timurkhabibulin.domain.Entities.PeriodType
 
 data class HabitPresentationEntity(
     var name: String,
