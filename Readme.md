@@ -1,6 +1,7 @@
 # My Habits
 
-My Habits - простое мобильное приложение для отслеживания привычек
+My Habits - простое мобильное приложение для отслеживания привычек.
+Сделано в рамках [курса](https://www.youtube.com/playlist?list=PLQ09TvuOLytS_vYHtFHQzZJFcnbYCYF6x) от Doubletapp
 
 ## Возможности:
 * Разделение привычек на хорошие и плохие
